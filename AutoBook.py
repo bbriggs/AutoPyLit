@@ -1,7 +1,7 @@
 from appscript import app
 from pymouse import PyMouse
 import time
-
+import Tkinter as tk
 #print location: (358.69140625, 282.88671875)
 #hit enter: app('System Events').key_code(76)
 # click PDF: (569.25390625, 337.71484375)
@@ -11,6 +11,13 @@ import time
 # pass enter
 #newpage = n
 # sleep between each thing at least .01 seconds time.sleep(seconds)
+
+def calibrate_location():
+	root = tk.Tk()
+	root.withdraw()
+	loc_x = root.winfo_pointerxy()[0]
+	loc_y = root.winfo_pointerxy()[1]
+	
 
 m = PyMouse()
 
