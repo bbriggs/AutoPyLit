@@ -27,7 +27,7 @@ if True:
 		time.sleep(.5) #wait
 		m.click(600.03125, 377.8515625, 1) #click PDF
 		time.sleep(.25) #wait
-		app('System Events').keystroke('page'+ "0" * (3 - len(str(i))) + str(i)) #type pdf name
+		app('System Events').keystroke('page'+ str(i).zfill(5)) #type pdf name
 		time.sleep(0.25) #wait
 		app('System Events').key_code(76) #press enter
 		time.sleep(1.25) #wait
