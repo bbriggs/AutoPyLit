@@ -14,10 +14,13 @@ import Tkinter as tk
 
 def calibrate_location():
 	root = tk.Tk()
+    #hides that silly window
 	root.withdraw()
-	loc_x = root.winfo_pointerxy()[0]
-	loc_y = root.winfo_pointerxy()[1]
-	
+    #winfo_pointerxy() returns a tuple with x and y. 
+    #pointerxy()[0] is the x and and pointerxy()[1] is the y. 
+    #We store the tuple in pointer_loc and return it. 
+	pointer_loc = root.winfo_pointerxy()
+    return pointer_loc
 
 m = PyMouse()
 
