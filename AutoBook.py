@@ -4,8 +4,9 @@ from pymouse import PyMouse
 from pykeyboard import PyKeyboard
 import time
 import os
+import Tkinter as tk
 
-#init objects
+#instantiate objects
 m = PyMouse()
 k = PyKeyboard()
 
@@ -13,17 +14,37 @@ k = PyKeyboard()
 finalFileNm = "WholeBook.pdf"
 startDir = "/home/kdm/"
 finalFolder = "/home/kdm/RippedBooks"
-numPages = 348 #pages in Doc
+numPages = 3 #pages in Doc
 i = 1 #starting page number
 
-def createPDFs():
+#Grab mouse location and return
+def calibrate_location(txt):
+	#create the instance
+	root = tk.Tk()
+	
+	#hides that silly window
+	root.withdraw()
+    
+	#asks user to move mouse to proper location and hit enter
+	raw_input("Move your mouse to the desired position for mouse for " + txt + \
+		" and press enter")
+    
+	#winfo_pointerxy() returns a tuple with x and y. 
+	#pointerxy[0] is the x and and pointerxy[1] is the y. 
+	#We store the tuple in pointer_loc and return it. 
+	pointer_loc = root.winfo_pointerxy()
+	
+	#return result
+	return pointer_loc
+
+def createPDFs(mouseTuple1, mouseTuple2):
 	#while loop loops through all pages and creates a pdf, 
 	#also moves those pdfs into a dedicated folder
 	#returns Boolean True/False for whether code executed successfully
 	global i, m, k
 	while i <= numPages:
 		#click print
-		m.click(421, 288) 
+		m.click(mouseTuple1[0], mouseTuple1[1]) 
 		
 		#wait until the print window is open
 		while str(os.system("wmctrl -l | grep 'kdm-virtual-machine Print'")) == "256":
@@ -52,7 +73,7 @@ def createPDFs():
 		time.sleep(1)
 		
 		#ensure focus is back in page
-		m.click(497, 385)
+		m.click(mouseTuple2[0], mouseTuple2[1])
 		
 		#Check to see if file was created
 		if not os.path.isfile(startDir + filenm):
@@ -81,8 +102,16 @@ def mergePDfs():
 #if block so we can turn code on/off easier
 if __name__ == '__main__':
 	#main code execution
+	
+	#Get first mouse tuple
+	firstTuple = calibrate_location("the print icon")
+	
+	#get second mouse tuple
+	secondTuple = calibrate_location("the page body")
+	
+	#get start time for loop execution
 	startTime = "Start Time: " + time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
-	if createPDFs():
+	if createPDFs(firstTuple, secondTuple):
 		mergePDfs()
 	else:
 		print "a problem occurred"
