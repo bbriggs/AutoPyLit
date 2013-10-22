@@ -64,3 +64,19 @@ if __name__ == '__main__':
 	else:
 		print "a problem occurred"
 	print "End Time: " + time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+		m.click(358.69140625, 282.88671875, 1) #click print
+		time.sleep(.25) #wait
+		app('System Events').key_code(76) #press enter
+		time.sleep(.5) #wait
+		m.click(570.97265625, 338.7890625, 1) #click PDF
+		time.sleep(.5) #wait
+		m.click(600.03125, 377.8515625, 1) #click PDF
+		time.sleep(.25) #wait
+		app('System Events').keystroke('page'+ str(i).zfill(5)) #type pdf name
+		time.sleep(0.25) #wait
+		app('System Events').key_code(76) #press enter
+		time.sleep(1.25) #wait
+		app('System Events').keystroke('n') #press n for next page
+		time.sleep(4) #wait
+		i += 1
+>>>>>>> e83bf268bf80fbbab83bea148a1f077d47c0016b
