@@ -1,5 +1,5 @@
 #imports
-#requires lib pyUserInput
+#requires lib pyUserInput, python-tk to be installed on ubuntu
 from pymouse import PyMouse
 from pykeyboard import PyKeyboard
 import time
