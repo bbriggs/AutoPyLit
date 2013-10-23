@@ -81,7 +81,7 @@ tRecMouse = Entry(fMouse, width = 8)
 bRecMouse = Button(fMouse, text="Get Coords", command=recMouseClick, width =8)
 
 fEnterString = Frame(master)
-lEnterString = Label(fEnterString, text="Pass Kestrokes:", anchor = W, justify=LEFT, width=30)
+lEnterString = Label(fEnterString, text="Pass Keystrokes:", anchor = W, justify=LEFT, width=30)
 tEnterString = Entry(fEnterString)
 mEnterString = StringVar(fEnterString)
 mEnterString.set("Special Keys")
