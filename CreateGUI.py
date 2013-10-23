@@ -24,7 +24,7 @@ def getMouseInput(event):
     tRecMouse.insert(0, str(master.winfo_pointerxy()))
     master.unbind("<Key>")
     
-def specialKeyInsert(event):
+def specialKeyInsert():
     """
     Special key menu options and corresponding values are stored in this dict
     Event is passed to this function
@@ -39,9 +39,16 @@ def specialKeyInsert(event):
     Insert          insert_key
     Escape          escape_key
     """
-    specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key"}
-    tEnterString.insert(0,specialkeys[mEnterString.get()])
-
+    #We're going to do the conversion later on, when we read the action list. For now, let's keep it human readable. 
+    specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
+    if mEnterString.get() != "Special Keys":
+		if len(tEnterString.get()) == 0:
+			tEnterString.insert(0,mEnterString.get())
+			mEnterString.set("Special Keys")
+		else:
+			tEnterString.insert(len(tEnterString.get()),"+"+mEnterString.get())
+			mEnterString.set("Special Keys")
+            
 def saveAction():
 	#saves the current action to the listbox
 	pass
@@ -78,7 +85,8 @@ mEnterString = StringVar(fEnterString)
 mEnterString.set("Special Keys")
 ##TO DO: Add support for F keys, Windows/Function/Mac key, Home/End, Page Up/Down
 mEnterStringOptions = OptionMenu(fEnterString, mEnterString, "Special Keys","Ctrl","Alt","Del","Insert","Esc")
-mEnterStringOptions.bind("<Button-1>",specialKeyInsert)
+#mEnterStringOptions.bind("<ButtonRelease-1>",specialKeyInsert)
+bEnterString = Button(fEnterString, text="Add", command=specialKeyInsert, width=8)
 
 fStartNum = Frame(master)
 lStartNum = Label(fStartNum, text="Starting Num:", anchor = W, justify=LEFT, width=30)
@@ -159,6 +167,7 @@ bRecMouse.pack(side=LEFT)
 lEnterString.pack(side=LEFT)
 tEnterString.pack(side=LEFT)
 mEnterStringOptions.pack(side=LEFT)
+bEnterString.pack(side=LEFT)
 lWait.pack(side=LEFT)
 tWait.pack(side=LEFT)
 lWaitScreen.pack(side=LEFT)
