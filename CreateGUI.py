@@ -1,9 +1,11 @@
 
 #imports
 from Tkinter import *
+from pykeyboard import PyKeyboard
 
 #initialize Objects
 master = Tk()
+k = PyKeyboard()
 
 #global Vars
 readyForMouseInput = False
@@ -23,11 +25,32 @@ def getMouseInput(event):
     master.unbind("<Key>")
 
 def keyEventForm():
-	#if we are currently ready to grab mouse input, do it
-	if readyForMouseInput:
-		#get mouse coords
-		readyForMouseInput = False
-
+	#Record Keystrokes to pass
+    """Special key cheatsheet:
+    Keyboard    Keycode     Keysym
+    Enter       13          Return
+    Left Ctrl   17          Control_L
+    Right Ctrl  17          Control_R
+    Left Shift  16          Shift_L
+    Right Shift 16          Shift_R
+    Caps Lock   20          Caps_Lock
+    Tab         9           Tab
+    Escape      27          Escape
+    Insert      45          Insert
+    Delete      46          Delete
+    Home        36          Home
+    End         35          End
+    Page Up     33          Prior
+    Page Down   34          Next
+    F1          112         F1
+    ...         ...         ...
+    F12         123         F12
+    Windows     91          Win_L
+    Left Alt    18          Alt_L
+    Right Alt   18          Alt_R
+    Menu        93          App
+    """ 
+    
 def saveAction():
 	#saves the current action to the listbox
 	pass
@@ -60,6 +83,9 @@ bRecMouse = Button(fMouse, text="Get Coords", command=recMouseClick, width =8)
 fEnterString = Frame(master)
 lEnterString = Label(fEnterString, text="Pass Kestrokes:", anchor = W, justify=LEFT, width=30)
 tEnterString = Entry(fEnterString)
+mEnterString = StringVar(fEnterString)
+mEnterString.set("Special Keys")
+mEnterStringOptions = OptionMenu(fEnterString, mEnterString, "Special Keys","Ctrl","Alt")
 
 fStartNum = Frame(master)
 lStartNum = Label(fStartNum, text="Starting Num:", anchor = W, justify=LEFT, width=30)
@@ -139,6 +165,7 @@ tRecMouse.pack(side=LEFT)
 bRecMouse.pack(side=LEFT)
 lEnterString.pack(side=LEFT)
 tEnterString.pack(side=LEFT)
+mEnterStringOptions.pack(side=LEFT)
 lWait.pack(side=LEFT)
 tWait.pack(side=LEFT)
 lWaitScreen.pack(side=LEFT)
