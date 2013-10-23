@@ -23,34 +23,25 @@ def recMouseClick():
 def getMouseInput(event):
     tRecMouse.insert(0, str(master.winfo_pointerxy()))
     master.unbind("<Key>")
-
-def keyEventForm():
-	#Record Keystrokes to pass
-    """Special key cheatsheet:
-    Keyboard    Keycode     Keysym
-    Enter       13          Return
-    Left Ctrl   17          Control_L
-    Right Ctrl  17          Control_R
-    Left Shift  16          Shift_L
-    Right Shift 16          Shift_R
-    Caps Lock   20          Caps_Lock
-    Tab         9           Tab
-    Escape      27          Escape
-    Insert      45          Insert
-    Delete      46          Delete
-    Home        36          Home
-    End         35          End
-    Page Up     33          Prior
-    Page Down   34          Next
-    F1          112         F1
-    ...         ...         ...
-    F12         123         F12
-    Windows     91          Win_L
-    Left Alt    18          Alt_L
-    Right Alt   18          Alt_R
-    Menu        93          App
-    """ 
     
+def specialKeyInsert(event):
+    """
+    Special key menu options and corresponding values are stored in this dict
+    Event is passed to this function
+    The call to tEnterString.insert() looks up corresponding value from Menu and
+    inserts it in text box on click
+    
+    Special key cheatsheet:
+    Menu Option     pyKeyboard Value
+    Ctrl            control_r_key control_l_key
+    Alt             alt_key alt_l_key alt_r_key
+    Delete          delete_key
+    Insert          insert_key
+    Escape          escape_key
+    """
+    specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key"}
+    tEnterString.insert(0,specialkeys[mEnterString.get()])
+
 def saveAction():
 	#saves the current action to the listbox
 	pass
@@ -85,7 +76,9 @@ lEnterString = Label(fEnterString, text="Pass Keystrokes:", anchor = W, justify=
 tEnterString = Entry(fEnterString)
 mEnterString = StringVar(fEnterString)
 mEnterString.set("Special Keys")
-mEnterStringOptions = OptionMenu(fEnterString, mEnterString, "Special Keys","Ctrl","Alt")
+##TO DO: Add support for F keys, Windows/Function/Mac key, Home/End, Page Up/Down
+mEnterStringOptions = OptionMenu(fEnterString, mEnterString, "Special Keys","Ctrl","Alt","Del","Insert","Esc")
+mEnterStringOptions.bind("<Button-1>",specialKeyInsert)
 
 fStartNum = Frame(master)
 lStartNum = Label(fStartNum, text="Starting Num:", anchor = W, justify=LEFT, width=30)
