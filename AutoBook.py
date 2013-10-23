@@ -26,7 +26,8 @@ def calibrate_location(txt):
 	root.withdraw()
     
 	#asks user to move mouse to proper location and hit enter
-	raw_input("Move your mouse to the desired position for mouse for " + txt + \
+	if str(txt) != str(-1):
+        raw_input("Move your mouse to the desired position for mouse for " + txt + \
 		" and press enter")
     
 	#winfo_pointerxy() returns a tuple with x and y. 

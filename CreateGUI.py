@@ -10,12 +10,17 @@ readyForMouseInput = False
 
 #functions
 def recMouseClick():
-	#Fill text box with string "press m to grab mouse location"
-	#set global var to something to signify that we are ready to use event when we hit m
-	global tRecMouse, readyForMouseInput
-	tRecMouse.delete(0, END)
-	cCanvas.create_text(20, 30, anchor=W, text ="Press m to grab mouse location, or enter in textbox")
-	readyForMouseInput = True
+    #Fill text box with string "press m to grab mouse location"
+    #set global var to something to signify that we are ready to use event when we hit m
+    global tRecMouse
+    tRecMouse.delete(0, END)
+    cCanvas.create_text(20, 30, anchor=W, text ="Press m to grab mouse location, or enter in textbox")
+    master.bind("m",getMouseInput)
+    master.focus()
+   
+def getMouseInput(event):
+    tRecMouse.insert(0, str(master.winfo_pointerxy()))
+    master.unbind("<Key>")
 
 def keyEventForm():
 	#if we are currently ready to grab mouse input, do it
