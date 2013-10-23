@@ -5,6 +5,7 @@ from pykeyboard import PyKeyboard
 
 #initialize Objects
 master = Tk()
+master.wm_title("pyScraper")
 k = PyKeyboard()
 
 #global Vars
