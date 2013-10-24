@@ -2,6 +2,7 @@
 #imports
 from Tkinter import *
 from pykeyboard import PyKeyboard
+import tkFileDialog
 
 #initialize Objects
 master = Tk()
@@ -11,6 +12,7 @@ k = PyKeyboard()
 #global Vars
 readyForMouseInput = False
 specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
+headerLst = ["Order","Action Type", "Value", "Comment"]
 
 #functions
 def recMouseClick():
@@ -25,6 +27,8 @@ def recMouseClick():
 def getMouseInput(event):
     tRecMouse.insert(0, str(master.winfo_pointerxy()))
     master.unbind("<Key>")
+    cCanvas.delete(ALL)
+    cCanvas.create_rectangle(5,5,390,100)
     
 def specialKeyInsert():
     """
@@ -49,17 +53,50 @@ def specialKeyInsert():
 		else:
 			tEnterString.insert(len(tEnterString.get()),"+"+mEnterString.get())
 			mEnterString.set("Special Keys")
-            
+
 def saveAction():
 	#saves the current action to the listbox
+	#ensure only one textbox is filled out
+	
 	pass
 
 def delAction():
 	#deletes selected action
-	pass
+	if len(lbActions.curselection()) == 0 or int(lbActions.curselection()[0]) == 0:
+		pass
+		#We will not allow you to delete the header, also if nothing is selected, do nothing
+	else:
+		lbActions.delete(ANCHOR)
 
 def loadConfig():
 	#load a saved config
+	#ask user to choose file:
+	loadFile = tkFileDialog.askopenfile()
+	
+	i = 0
+	lines = loadFile.readlines()
+	#get each line in file
+	lbActions.delete(0,END)
+	addLBItem(headerLst)
+	for line in lines:
+		#loop through line for args
+		fileArgs = []
+		currLine = line.replace("\n","")
+		fileArgs = currLine.split('<~>')
+		if int(fileArgs[0]) == -1:
+			#End num
+			tStartNum.delete(0,END)
+			tStartNum.insert(0,fileArgs[2])
+		elif int(fileArgs[0]) == -2:
+			#start num
+			tEndNum.delete(0,END)
+			tEndNum.insert(0,fileArgs[2])
+		else:
+			addLBItem(fileArgs)
+		i += 1
+		currline = str(loadFile.readline(1))
+
+def clearInputs():
 	pass
 
 def saveConfig():
@@ -73,6 +110,11 @@ def saveConfigAs():
 def moveItem(moveVal):
 	#move selected item up/down
 	pass
+
+def addLBItem(argLst):
+	#order, action type, value, comment are column headers
+	lbActions.insert(END, argLst[0].ljust(8) + "|" + argLst[1].ljust(20) + \
+		"|" + argLst[2].ljust(25) + "|" + argLst[3].ljust(25))
 
 #create GUI buttons
 lTitle = Label(master, text="Mouse / Keyboard Automation Tool",anchor = W, justify=LEFT)
@@ -123,7 +165,9 @@ bDown = Button(fMoveButtons, text=u"\u2193", command=moveItem(1))
 
 fActions = Frame(master)
 lActions = Label(fActions, text="Action List:", anchor = W, justify=LEFT, width=30)
-lbActions = Listbox(fActions, width = 50)
+lbActions = Listbox(fActions, width = 100, font=("Courier",12))
+addLBItem(["Order", "Action Type", "Value", "Comment"])
+
 
 fSaves = Frame(master)
 bLoad = Button(fSaves, text="Load Config", command=loadConfig)
