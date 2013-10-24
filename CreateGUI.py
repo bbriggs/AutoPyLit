@@ -2,7 +2,7 @@
 #imports
 from Tkinter import *
 from pykeyboard import PyKeyboard
-import tkFileDialog
+import tkFileDialog, tkMessageBox
 
 #initialize Objects
 master = Tk()
@@ -13,6 +13,7 @@ k = PyKeyboard()
 readyForMouseInput = False
 specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
 headerLst = ["Order","Action Type", "Value", "Comment"]
+delimChars = "<~>"
 
 #functions
 def recMouseClick():
@@ -20,15 +21,19 @@ def recMouseClick():
     #set global var to something to signify that we are ready to use event when we hit m
     global tRecMouse
     tRecMouse.delete(0, END)
-    cCanvas.create_text(20, 30, anchor=W, text ="Press m to grab mouse location, or enter in textbox")
+    sendMessage("Press m to grab mouse location, or enter in textbox")
     master.bind("m",getMouseInput)
     master.focus()
+
+def sendMessage(txt):
+	cCanvas.delete(ALL)
+	cCanvas.create_text(20, 30, anchor=W, text =txt)
+	cCanvas.create_rectangle(5,5,390,100)
 
 def getMouseInput(event):
     tRecMouse.insert(0, str(master.winfo_pointerxy()))
     master.unbind("<Key>")
-    cCanvas.delete(ALL)
-    cCanvas.create_rectangle(5,5,390,100)
+    sendMessage("")
     
 def specialKeyInsert():
     """
@@ -57,16 +62,39 @@ def specialKeyInsert():
 def saveAction():
 	#saves the current action to the listbox
 	#ensure only one textbox is filled out
+	total = int(tRecMouse.get().strip() != "")
+	total += int(tEnterString.get().strip() != "")
+	total += int(tWait.get().strip() != "")
+	total += int(tWaitScreen.get().strip() != "")
 	
-	pass
-
+	print tRecMouse.get().strip()
+	
+	#false is zero
+	#true is one
+	
+	print total
+	
+	if total == 1:
+		#exactly 1 input
+		#save action to masterListbox then refresh listbox
+		orderNum = lb
+		
+	elif total == 0:
+		#no inputs
+		tkMessageBox.showwarning("Wrong number of inputs!", "You must have at least one action filled out!")
+	else:
+		#more than one input
+		tkMessageBox.showwarning("Wrong number of inputs!", "Entering more than one action at a time is not allowed, please only select a Mouse, Keyboard, Wait or Window action")
+		
+		
 def delAction():
 	#deletes selected action
 	if len(lbActions.curselection()) == 0 or int(lbActions.curselection()[0]) == 0:
 		pass
 		#We will not allow you to delete the header, also if nothing is selected, do nothing
 	else:
-		lbActions.delete(ANCHOR)
+		lbActionsBackend.delete(lbActions.curselection())
+		repaintActionLb()
 
 def loadConfig():
 	#load a saved config
@@ -76,13 +104,13 @@ def loadConfig():
 	i = 0
 	lines = loadFile.readlines()
 	#get each line in file
-	lbActions.delete(0,END)
+	lbActionsBackend.delete(0,END)
 	addLBItem(headerLst)
 	for line in lines:
 		#loop through line for args
 		fileArgs = []
 		currLine = line.replace("\n","")
-		fileArgs = currLine.split('<~>')
+		fileArgs = currLine.split(delimChars)
 		if int(fileArgs[0]) == -1:
 			#End num
 			tStartNum.delete(0,END)
@@ -95,6 +123,7 @@ def loadConfig():
 			addLBItem(fileArgs)
 		i += 1
 		currline = str(loadFile.readline(1))
+	repaintActionLb()
 
 def clearInputs():
 	pass
@@ -111,10 +140,27 @@ def moveItem(moveVal):
 	#move selected item up/down
 	pass
 
+#add an item to master listbox, repaint listbox user sees
 def addLBItem(argLst):
 	#order, action type, value, comment are column headers
-	lbActions.insert(END, argLst[0].ljust(8) + "|" + argLst[1].ljust(20) + \
-		"|" + argLst[2].ljust(25) + "|" + argLst[3].ljust(25))
+	lbActionsBackend.insert(END, argLst[0] + "<~>" + argLst[1] + \
+		"<~>" + argLst[2] + "<~>" + argLst[3])
+	repaintActionLb()
+
+#Pull all data from master listbox and repaint what the user sees
+def repaintActionLb():
+	#Clear list and add header
+	lbActionsBackend.delete(0,END)
+	lbActions.insert(END, "Order".ljust(8) + "|" + "Action Type".ljust(20) + \
+		"|" + "Value".ljust(25) + "|" + "Comment".ljust(25))
+	
+	i = 0
+	#loop through backend listbox and display values in user friendly way, will truncate chars if necessary
+	for i in range(lbActionsBackend.size()-1):
+		lineStr = str(lbActionsBackend.get(i))
+		argLst = lineStr.split(delimChars)
+		lbActions.insert(END, argLst[0][0:8].ljust(8) + "|" + argLst[1][0:20].ljust(20) + \
+			"|" + argLst[2][0:25].ljust(25) + "|" + argLst[3][0:25].ljust(25))
 
 #create GUI buttons
 lTitle = Label(master, text="Mouse / Keyboard Automation Tool",anchor = W, justify=LEFT)
@@ -166,7 +212,8 @@ bDown = Button(fMoveButtons, text=u"\u2193", command=moveItem(1))
 fActions = Frame(master)
 lActions = Label(fActions, text="Action List:", anchor = W, justify=LEFT, width=30)
 lbActions = Listbox(fActions, width = 100, font=("Courier",12))
-addLBItem(["Order", "Action Type", "Value", "Comment"])
+lbActionsBackend = Listbox(fActions, width=1, height =1)
+repaintActionLb()
 
 
 fSaves = Frame(master)
