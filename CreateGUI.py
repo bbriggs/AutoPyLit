@@ -10,6 +10,7 @@ k = PyKeyboard()
 
 #global Vars
 readyForMouseInput = False
+specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
 
 #functions
 def recMouseClick():
@@ -20,7 +21,7 @@ def recMouseClick():
     cCanvas.create_text(20, 30, anchor=W, text ="Press m to grab mouse location, or enter in textbox")
     master.bind("m",getMouseInput)
     master.focus()
-   
+
 def getMouseInput(event):
     tRecMouse.insert(0, str(master.winfo_pointerxy()))
     master.unbind("<Key>")
@@ -41,7 +42,6 @@ def specialKeyInsert():
     Escape          escape_key
     """
     #We're going to do the conversion later on, when we read the action list. For now, let's keep it human readable. 
-    specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
     if mEnterString.get() != "Special Keys":
 		if len(tEnterString.get()) == 0:
 			tEnterString.insert(0,mEnterString.get())
@@ -52,6 +52,10 @@ def specialKeyInsert():
             
 def saveAction():
 	#saves the current action to the listbox
+	pass
+
+def delAction():
+	#deletes selected action
 	pass
 
 def loadConfig():
@@ -110,7 +114,8 @@ lComment = Label(fComment, text="Enter a Comment with Action:", anchor = W, just
 tComment = Entry(fComment)
 
 fSaveAction = Frame(master)
-bSaveAction = Button(fSaveAction, text="Save Action", command=saveAction, width=30)
+bSaveAction = Button(fSaveAction, text="Save Action", command=saveAction, width=15)
+bDelAction = Button(fSaveAction, text="Delete Action", command=delAction, width=15)
 
 fMoveButtons = Frame(master)
 bUp = Button(fMoveButtons, text=u"\u2191", command=moveItem(-1))
@@ -175,6 +180,7 @@ lWaitScreen.pack(side=LEFT)
 tWaitScreen.pack(side=LEFT)
 tWait.pack(side=LEFT)
 bSaveAction.pack(side=RIGHT)
+bDelAction.pack(side=RIGHT)
 bUp.pack(side=LEFT)
 bDown.pack(side=LEFT)
 lActions.pack()
@@ -186,5 +192,10 @@ lCanvas.pack()
 cCanvas.pack()
 lComment.pack(side=LEFT)
 tComment.pack(side=LEFT)
+lStartNum.pack(side=LEFT)
+tStartNum.pack(side=LEFT)
+lEndNum.pack(side=LEFT)
+tEndNum.pack(side=LEFT)
+
 
 master.mainloop()
