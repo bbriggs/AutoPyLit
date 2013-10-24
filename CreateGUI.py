@@ -8,9 +8,6 @@ master = Tk()
 master.wm_title("pyScraper")
 k = PyKeyboard()
 
-#global Vars
-readyForMouseInput = False
-
 #functions
 def recMouseClick():
     #Fill text box with string "press m to grab mouse location"
