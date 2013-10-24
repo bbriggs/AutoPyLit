@@ -99,7 +99,6 @@ mEnterString = StringVar(fEnterString)
 mEnterString.set("Special Keys")
 ##TO DO: Add support for F keys, Windows/Function/Mac key, Home/End, Page Up/Down
 mEnterStringOptions = OptionMenu(fEnterString, mEnterString, "Special Keys","Ctrl","Alt","Del","Insert","Esc")
-#mEnterStringOptions.bind("<ButtonRelease-1>",specialKeyInsert)
 bEnterString = Button(fEnterString, text="Add", command=specialKeyInsert, width=8)
 
 fStartNum = Frame(master)
