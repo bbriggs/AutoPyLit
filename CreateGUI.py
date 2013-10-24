@@ -19,6 +19,12 @@ def recMouseClick():
     master.focus()
    
 def getMouseInput(event):
+	"""
+	Triggered by recMouseClick
+	Input/args: event
+	Purpose: grabs a mouse location as a tuple and passes it to the textbox for mouse coords in the GUI
+	Unbinds after event occurs to ensure that we don't keep updating coords every time the user presses 'm'
+	"""
     tRecMouse.insert(0, str(master.winfo_pointerxy()))
     master.unbind("<Key>")
     
@@ -48,23 +54,33 @@ def specialKeyInsert():
 			mEnterString.set("Special Keys")
             
 def saveAction():
-	#saves the current action to the listbox
+	"""
+	Saves the current (highlighted) action to the listbox
+	"""
 	pass
 
 def loadConfig():
-	#load a saved config
+	"""
+	Loads a saved config
+	"""
 	pass
 
 def saveConfig():
-	#save current config, if currently saved, overwrite, if not, pop up dialog box
+	"""
+	Save current config, if currently saved, overwrite, if not, pop up dialog box
+	"""
 	pass
 
 def saveConfigAs():
-	#save as, always pop up dialog box
+	"""
+	Save as, always pop up dialog box
+	"""
 	pass
 
 def moveItem(moveVal):
-	#move selected item up/down
+	"""
+	Move selected item up/down in event order
+	"""
 	pass
 
 #create GUI buttons
