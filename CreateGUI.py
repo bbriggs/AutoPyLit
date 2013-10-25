@@ -1,6 +1,7 @@
 """To do:
 	1. Save As button
 	2. Figure out why extra lines are going into saved files
+	3. Add Function Keys, Tab, Shift, Enter/Return
 """
 #imports
 from Tkinter import *
@@ -215,8 +216,15 @@ def saveConfig(saveAs=False):
 			tkMessageBox.showinfo("Save cancelled by user!")
 			return
 		elif len(loadedFileName !=0):
-			saveFile = open(loadedFileName,"w+")
-		
+			#we have a loaded file name, use that
+			if os.path.isfile(loadedFileName):
+				saveFile = open(loadedFileName,"w+")
+			else:
+				tkMessageBox.showinfo("""It looks like something is wrong with your 
+					loaded file.  Please select another file""")
+				loadedFileName = ""
+				saveConfig(saveAs)
+
 	#ensure filetype is fecn
 	if saveFile.name[len(saveFile.name)-5:len(saveFile.name)] == ".fecn":
 		#file is good continue with save
@@ -227,9 +235,11 @@ def saveConfig(saveAs=False):
 		loadedFileName = saveFile.name
 		saveFile.close()
 		beenSaved = True
+		tkMessageBox.showinfo("File Saved!")
 	else:
-		#wrong filename
-		pass
+		tkMessageBox.showinfo("Filename must end with .FECN")
+		saveConfig(saveAs)
+
 
 def saveConfigAs():
 	#save as, always pop up dialog box
