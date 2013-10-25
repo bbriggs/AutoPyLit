@@ -173,6 +173,7 @@ def clearInputs():
 	tEnterString.delete(0, END)
 	tWait.delete(0, END)
 	tWaitScreen.delete(0, END)
+	tComments.delete(0, END)
 	sendMessage("")
 
 #clear screen and vars for new sequence
@@ -198,13 +199,23 @@ def newActionSet():
 		"|" + "Value".ljust(25) + "|" + "Comment".ljust(25))
 	beenSaved = True	
 
-def saveConfig():
+def saveConfig(saveAs=False):
 	#save current config, if currently saved, overwrite, if not, pop up dialog box
 	#determine if we already have a file loaded, if so, proceed, if not, open dialog
 	#loop through lbActionsBackend to get data
 	#write data to file
-	global beenSaved
-	saveFile = tkFileDialog.asksaveasfile(mode='w',defaultextension=".fecn")
+	global beenSaved, loadedFileName
+	
+	#If we haven't already saved, or if we clicked saveAs, ask user for filename
+	if len(loadedFileName)==0 or saveAs:
+		saveFile = tkFileDialog.asksaveasfile(mode='w',defaultextension=".fecn")
+		#if nothing returned, quit
+		if saveFile == None:
+			tkMessageBox.showinfo("Save cancelled by user!")
+			return
+		elif len(loadedFileName !=0):
+			saveFile = open(loadedFileName,"w+")
+		
 	#ensure filetype is fecn
 	if saveFile.name[len(saveFile.name)-5:len(saveFile.name)] == ".fecn":
 		#file is good continue with save
@@ -212,19 +223,16 @@ def saveConfig():
 		saveFile.write("-1<~>StartNum<~>%s<~>\n" % tStartNum.get())
 		saveFile.write("-2<~>EndNum<~>%s<~>\n" % tEndNum.get())
 		saveFile.writelines(lbActionsBackend.get(0,END))
+		loadedFileName = saveFile.name
 		saveFile.close()
+		beenSaved = True
 	else:
 		#wrong filename
 		pass
-		
-	beenSaved = True
-	pass
 
 def saveConfigAs():
 	#save as, always pop up dialog box
-	global beenSaved
-	beenSaved = True
-	pass
+	saveConfig(True)
 
 def moveItemUp():
 	moveItem(-1)
