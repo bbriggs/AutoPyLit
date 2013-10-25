@@ -1,13 +1,12 @@
 """To do:
-	1. Save As button
-	2. Figure out why extra lines are going into saved files
-	3. Add Function Keys, Tab, Shift, Enter/Return
-"""
+	1. Go Function
+	"""
 #imports
 from Tkinter import *
 from pykeyboard import PyKeyboard
 from pymouse import PyMouse
 import tkFileDialog, tkMessageBox
+import os
 
 #initialize Objects
 master = Tk()
@@ -17,7 +16,7 @@ m = PyMouse()
 
 #global Vars
 readyForMouseInput = False
-specialkeys= {"Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
+specialkeys= {"Tab":"k.tab_key","Shift":"k.shift_l_key","Enter":"k.enter_key","Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
 headerLst = ["Order","Action Type", "Value", "Comment"]
 delimChars = "<~>"
 loadedFileName = ""
@@ -60,12 +59,15 @@ def specialKeyInsert():
     """
     #We're going to do the conversion later on, when we read the action list. For now, let's keep it human readable. 
     if mEnterString.get() != "Special Keys":
-		if len(tEnterString.get()) == 0:
-			tEnterString.insert(0,mEnterString.get())
-			mEnterString.set("Special Keys")
-		else:
-			tEnterString.insert(len(tEnterString.get()),"+"+mEnterString.get())
-			mEnterString.set("Special Keys")
+    	if tEnterString.get() == "F[x]":
+    		tkMessageBox.showinfo("Fill in x", "Please fill in x with the appropriate function key!")
+    	
+    	if len(tEnterString.get()) == 0:
+    		tEnterString.insert(0,mEnterString.get())
+    		mEnterString.set("Special Keys")
+    	else:
+    		tEnterString.insert(len(tEnterString.get()),"+"+mEnterString.get())
+    		mEnterString.set("Special Keys")
 
 def saveAction():
 	#saves the current action to the listbox
@@ -141,7 +143,7 @@ def loadConfig():
 	
 	if loadFile == None:
 		#no file returned
-		tkMessageBox.showinfo("Load cancelled by user!")
+		tkMessageBox.showinfo("Cancelled", "Load cancelled by user!")
 		return
 		
 	lines = loadFile.readlines()
@@ -199,31 +201,31 @@ def newActionSet():
 	lbActionsBackend.delete(0, END)
 	lbActions.insert(END, "Order".ljust(8) + "|" + "Action Type".ljust(20) + \
 		"|" + "Value".ljust(25) + "|" + "Comment".ljust(25))
-	beenSaved = True	
+	beenSaved = True
 
 def saveConfig(saveAs=False):
 	#save current config, if currently saved, overwrite, if not, pop up dialog box
-	#determine if we already have a file loaded, if so, proceed, if not, open dialog
-	#loop through lbActionsBackend to get data
-	#write data to file
 	global beenSaved, loadedFileName
 	
+	#if we have a loaded file and we didn't click saveAs, load the file
+	if len(loadedFileName) !=0:
+		if os.path.isfile(loadedFileName):
+			#file still exists
+			saveFile = open(loadedFileName,"w+")
+		else:
+			#file is missing!
+			tkMessageBox.showinfo("Error!", """It looks like something is wrong with your 
+				loaded file.  Please select another file""")
+			loadedFileName = ""
+			saveConfig(saveAs)
+	
 	#If we haven't already saved, or if we clicked saveAs, ask user for filename
-	if len(loadedFileName)==0 or saveAs:
+	if (len(loadedFileName)==0) or saveAs:
 		saveFile = tkFileDialog.asksaveasfile(mode='w',defaultextension=".fecn")
 		#if nothing returned, quit
 		if saveFile == None:
-			tkMessageBox.showinfo("Save cancelled by user!")
+			tkMessageBox.showinfo("Cancelled!", "Save cancelled by user!")
 			return
-		elif len(loadedFileName !=0):
-			#we have a loaded file name, use that
-			if os.path.isfile(loadedFileName):
-				saveFile = open(loadedFileName,"w+")
-			else:
-				tkMessageBox.showinfo("""It looks like something is wrong with your 
-					loaded file.  Please select another file""")
-				loadedFileName = ""
-				saveConfig(saveAs)
 
 	#ensure filetype is fecn
 	if saveFile.name[len(saveFile.name)-5:len(saveFile.name)] == ".fecn":
@@ -235,9 +237,9 @@ def saveConfig(saveAs=False):
 		loadedFileName = saveFile.name
 		saveFile.close()
 		beenSaved = True
-		tkMessageBox.showinfo("File Saved!")
+		tkMessageBox.showinfo("Saved!", "File Saved!")
 	else:
-		tkMessageBox.showinfo("Filename must end with .FECN")
+		tkMessageBox.showinfo("File Type Error", "Filename must end with .FECN")
 		saveConfig(saveAs)
 
 
@@ -262,7 +264,6 @@ def moveItem(moveDir):
 		curItm = lbActionsBackend.get((str(lstindex - 1)))
 		
 		#ensure movement is allowed
-		print lbActions.size()
 		if (lstindex + moveDir > 0) and (lstindex + moveDir < lbActions.size()) and \
 				(lstindex !=0):
 			#delete item
@@ -280,7 +281,7 @@ def moveItem(moveDir):
 def addLBItem(argLst):
 	#order, action type, value, comment are column headers
 	lbActionsBackend.insert(END, str(argLst[0]) + "<~>" + str(argLst[1]) + \
-		"<~>" + str(argLst[2]) + "<~>" + str(argLst[3]) + "\n")
+		"<~>" + str(argLst[2]) + "<~>" + str(argLst[3]).strip("\n") + "\n")
 	repaintActionLb()
 
 #Pull all data from master listbox and repaint what the user sees
