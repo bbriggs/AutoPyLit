@@ -5,6 +5,7 @@
 #imports
 from Tkinter import *
 from pykeyboard import PyKeyboard
+from pymouse import PyMouse
 import tkFileDialog, tkMessageBox
 
 #initialize Objects
@@ -282,6 +283,9 @@ def repaintActionLb():
 			"|" + argLst[2][0:25].ljust(25) + "|" + argLst[3][0:25].ljust(25))
 		i += 1
 
+def goGetEmTiger():
+	pass
+
 def createWidgets():
 	#create GUI buttons
 	global lTitle, lTitle2, fMouse, lRecMouse, tRecMouse, bRecMouse, fEnterString, \
@@ -289,7 +293,7 @@ def createWidgets():
 		fStartNum, lStartNum, tStartNum, fEndNum, lEndNum, tEndNum, fWait, lWait, tWait, \
 		fWaitScreen, lWaitScreen, tWaitScreen, fComment, lComment, tComment, fSaveAction, \
 		bSaveAction, bDelAction, fMoveButtons, bUp, bDown, fActions, lActions, lbActions, \
-		lbActionsBackend, fSaves, bLoad, bSave, bSaveAs, fCanvas, lCanvas, cCanvas, bClear
+		lbActionsBackend, fSaves, bLoad, bSave, bSaveAs, fCanvas, lCanvas, cCanvas, bClear, bGo
 		
 	
 	lTitle = Label(master, text="Mouse / Keyboard Automation Tool",anchor = W, justify=LEFT)
@@ -356,6 +360,8 @@ def createWidgets():
 	cCanvas = Canvas(master, height = 100, width = 655)
 	cCanvas.create_rectangle(5,5,610,100)
 
+	bGo = Button(master, text="GO!", command=goGetEmTiger, height = 5)
+
 def paintWidgets():
 	#paint everything
 	
@@ -410,7 +416,11 @@ def paintWidgets():
 	#Canvas
 	lCanvas.grid(row=13, column = 0, sticky=W)
 	cCanvas.grid(row=14, column = 0, columnspan = 4, sticky=W)
-
+	
+	#Go Button
+	bGo.grid(row = 15, column = 0, columnspan = 4, sticky=NSEW)
+	master.grid_rowconfigure(15, minsize=100)
+	
 createWidgets()
 paintWidgets()
 
