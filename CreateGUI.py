@@ -128,7 +128,7 @@ def loadConfig():
 	
 	#determine if user gets option to save, provide if necessary
 	if not(beenSaved):
-		#ask user if they want to save
+		#ask user if they want to save, if not, proceed
 		if tkMessageBox.askyesno("Save?","Would you like to save your current list?"):
 			if len(loadedFile) > 0:
 				saveConfig()
@@ -141,7 +141,7 @@ def loadConfig():
 	
 	if loadFile == None:
 		#no file returned
-		print "No File Returned"
+		tkMessageBox.showinfo("Load cancelled by user!")
 		return
 		
 	lines = loadFile.readlines()
@@ -275,9 +275,6 @@ def moveItem(moveDir):
 			lbActions.activate(lstindex + moveDir)
 			lbActions.selection_set(lstindex + moveDir)
 			beenSaved = False
-		else:
-			print "not allowed"
-	pass
 
 #add an item to master listbox, repaint listbox user sees
 def addLBItem(argLst):
@@ -349,7 +346,7 @@ def createWidgets():
 	mEnterString.set("Special Keys")
 	##TO DO: Add support for F keys, Windows/Function/Mac key, Home/End, Page Up/Down
 	mEnterStringOptions = OptionMenu(master, mEnterString, "Special Keys","Ctrl", \
-		"Alt","Del","Insert","Esc")
+		"Alt","Del","Insert","Esc","Tab","Shift","Enter","F[x]")
 	#mEnterStringOptions.bind("<ButtonRelease-1>",specialKeyInsert)
 	bEnterString = Button(master, text="Add", command=specialKeyInsert)
 
