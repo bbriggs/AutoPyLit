@@ -1,10 +1,6 @@
 """To do:
 	1. Save As button
 	2. Figure out why extra lines are going into saved files
-	3. Move Start Num / End Num values beneath action list
-	4. hide backend listbox
-	5. maybe look at moving arrow buttons over to right side of list
-	6. implement grid painting instead of pack
 """
 #imports
 from Tkinter import *
@@ -37,7 +33,7 @@ def recMouseClick():
 def sendMessage(txt):
 	cCanvas.delete(ALL)
 	cCanvas.create_text(20, 30, anchor=W, text =txt)
-	cCanvas.create_rectangle(5,5,390,100)
+	cCanvas.create_rectangle(5,5,610,100)
 
 def getMouseInput(event):
     tRecMouse.insert(0, str(master.winfo_pointerxy()))
@@ -300,115 +296,120 @@ def createWidgets():
 	lTitle2 = Label(master, text="",anchor = W, justify=LEFT)
 
 	fMouse = Frame(master)
-	lRecMouse = Label(fMouse, text="Click at Coordinates (x,y):", anchor = W, justify=LEFT, width=30)
-	tRecMouse = Entry(fMouse, width = 8)
-	bRecMouse = Button(fMouse, text="Get Coords", command=recMouseClick, width =8)
+	lRecMouse = Label(master, text="Click at Coordinates (x,y):", anchor = W, justify=LEFT)
+	tRecMouse = Entry(master)
+	bRecMouse = Button(master, text="Get Coordinates", command=recMouseClick, width = 14)
 
 	fEnterString = Frame(master)
-	lEnterString = Label(fEnterString, text="Pass Keystrokes:", anchor = W, justify=LEFT, width=30)
-	tEnterString = Entry(fEnterString)
-	mEnterString = StringVar(fEnterString)
+	lEnterString = Label(master, text="Pass Keystrokes:", anchor = W, justify=LEFT)
+	tEnterString = Entry(master)
+	mEnterString = StringVar(master)
 	mEnterString.set("Special Keys")
 	##TO DO: Add support for F keys, Windows/Function/Mac key, Home/End, Page Up/Down
-	mEnterStringOptions = OptionMenu(fEnterString, mEnterString, "Special Keys","Ctrl","Alt","Del","Insert","Esc")
+	mEnterStringOptions = OptionMenu(master, mEnterString, "Special Keys","Ctrl", \
+		"Alt","Del","Insert","Esc")
 	#mEnterStringOptions.bind("<ButtonRelease-1>",specialKeyInsert)
-	bEnterString = Button(fEnterString, text="Add", command=specialKeyInsert, width=8)
+	bEnterString = Button(master, text="Add", command=specialKeyInsert)
 
 	fStartNum = Frame(master)
-	lStartNum = Label(fStartNum, text="Starting Num:", anchor = W, justify=LEFT, width=30)
-	tStartNum = Entry(fStartNum)
+	lStartNum = Label(master, text="Starting Num:", anchor = W, justify=LEFT)
+	tStartNum = Entry(master)
 
 	fEndNum = Frame(master)
-	lEndNum = Label(fEndNum, text="Ending Num (inclusive):", anchor = W, justify=LEFT, width=30)
-	tEndNum = Entry(fEndNum)
+	lEndNum = Label(master, text="Ending Num (inclusive):", anchor = W, justify=LEFT)
+	tEndNum = Entry(master)
 
 	fWait = Frame(master)
-	lWait = Label(fWait, text="Wait Seconds:", anchor = W, justify=LEFT, width=30)
-	tWait = Entry(fWait)
+	lWait = Label(master, text="Wait Seconds:", anchor = W, justify=LEFT)
+	tWait = Entry(master)
 
 	fWaitScreen = Frame(master)
-	lWaitScreen = Label(fWaitScreen, text="Wait for window to open with name:", anchor = W, justify=LEFT, width=30)
-	tWaitScreen = Entry(fWaitScreen)
+	lWaitScreen = Label(master, text="Wait for window to open with name:", anchor = W, justify=LEFT)
+	tWaitScreen = Entry(master)
 
 	fComment = Frame(master)
-	lComment = Label(fComment, text="Enter a Comment with Action:", anchor = W, justify=LEFT, width=30)
-	tComment = Entry(fComment)
+	lComment = Label(master, text="Enter a Comment with Action:", anchor = W, justify=LEFT)
+	tComment = Entry(master)
 
 	fSaveAction = Frame(master)
-	bSaveAction = Button(fSaveAction, text="Save Action", command=saveAction, width=15)
-	bDelAction = Button(fSaveAction, text="Delete Action", command=delAction, width=15)
+	bSaveAction = Button(master, text="Save Action", command=saveAction, width =10)
+	bDelAction = Button(master, text="Delete Action", command=delAction, width =10)
 
 	fActions = Frame(master)
-	lActions = Label(fActions, text="Action List:", anchor = W, justify=LEFT, width=30)
-	lbActions = Listbox(fActions, width = 100, font=("Courier",12))
-	lbActionsBackend = Listbox(fActions, width=100)
+	lActions = Label(master, text="Action List:", anchor = W, justify=LEFT)
+	lbActions = Listbox(master, width = 86, font=("Courier",12))
+	lbActionsBackend = Listbox(master)
 	repaintActionLb()
 
 	fMoveButtons = Frame(master)
-	bUp = Button(fMoveButtons, text=u"\u2191", command=moveItemUp)
-	bDown = Button(fMoveButtons, text=u"\u2193", command=moveItemDwn)
+	bUp = Button(master, text=u"\u2191", command=moveItemUp)
+	bDown = Button(master, text=u"\u2193", command=moveItemDwn)
 
 	fSaves = Frame(master)
-	bLoad = Button(fSaves, text="Load Config", command=loadConfig)
-	bSave = Button(fSaves, text="Save Config", command=saveConfig)
-	bSaveAs = Button(fSaves, text="Save Config As...", command=saveConfigAs)
-	bClear = Button(fSaves, text="Clear Screen", command=newActionSet)
+	bLoad = Button(fSaves, text="Load Config", command=loadConfig, width = 15)
+	bSave = Button(fSaves, text="Save Config", command=saveConfig, width = 15)
+	bSaveAs = Button(fSaves, text="Save Config As...", command=saveConfigAs, width = 15)
+	bClear = Button(fSaves, text="Clear Screen", command=newActionSet, width = 15)
 
 	fCanvas = Frame(master)
-	lCanvas = Label(fCanvas, text="Messages:")
-	cCanvas = Canvas(fCanvas, height = 100, width = 400)
-	cCanvas.create_rectangle(5,5,390,100)
+	lCanvas = Label(master, text="Messages:")
+	cCanvas = Canvas(master, height = 100, width = 655)
+	cCanvas.create_rectangle(5,5,610,100)
 
 def paintWidgets():
 	#paint everything
-	lTitle.pack()
-	lTitle2.pack()
+	
+	#titles
+	lTitle.grid(row = 0, column = 0, columnspan=4)
+	lTitle2.grid(row = 1, column = 0, columnspan=4)
+	
+	#Action Labels
+	lRecMouse.grid(row = 2, column = 0, sticky=W)
+	lEnterString.grid(row = 3, column = 0, sticky=W)
+	lWait.grid(row = 4, column = 0, sticky=W)
+	lWaitScreen.grid(row = 5, column = 0, sticky=W)
+	lComment.grid(row = 6, column = 0, sticky=W)
+	
+	#Action Controls
+	tRecMouse.grid(row = 2, column = 1, sticky=W)
+	tEnterString.grid(row = 3, column = 1, sticky=W)
+	tWait.grid(row = 4, column = 1, sticky=W)
+	tWaitScreen.grid(row = 5, column = 1, sticky=W)
+	tComment.grid(row = 6, column = 1, sticky=W+E, columnspan = 3)
+	
+	#Action Control Buttons
+	bRecMouse.grid(row = 2, column = 2, sticky=W+E, padx=3)
+	mEnterStringOptions.grid(row=3, column = 2, sticky=W+E)
+	bEnterString.grid(row=3, column = 3, sticky=W+E)
+	
+	#Action buttons
+	bDelAction.grid(row=7, column = 2, columnspan=2, sticky = E, padx = 3)
+	bSaveAction.grid(row = 7, column = 2, columnspan=2, sticky = W)
+	
+	#action listbox
+	lActions.grid(row=8, column = 0, sticky=W)
+	lbActions.grid(row = 9, column = 0, sticky=W, columnspan = 4, padx=10)
 
-	fMouse.pack()
-	fEnterString.pack()
-	fStartNum.pack()
-	fEndNum.pack()
-	fWait.pack()
-	fWaitScreen.pack()
-	fComment.pack()
-	fSaveAction.pack()
-	fMoveButtons.pack()
-	fActions.pack()
-	fSaves.pack()
-	fCanvas.pack()
+	#Up / Down buttons
+	bUp.grid(row = 9, column = 0, columnspan = 4, sticky=NE, pady = 10)
+	bDown.grid(row = 9, column = 0, columnspan = 4, sticky=SE, pady = 10)
 
-	lRecMouse.pack(side=LEFT)
-	tRecMouse.pack(side=LEFT)
-	bRecMouse.pack(side=LEFT)
-	lEnterString.pack(side=LEFT)
-	tEnterString.pack(side=LEFT)
-	mEnterStringOptions.pack(side=LEFT)
-	bEnterString.pack(side=LEFT)
-	lWait.pack(side=LEFT)
-	tWait.pack(side=LEFT)
-	lWaitScreen.pack(side=LEFT)
-	tWaitScreen.pack(side=LEFT)
-	tWait.pack(side=LEFT)
-	bSaveAction.pack(side=RIGHT)
-	bDelAction.pack(side=RIGHT)
-	bUp.pack(side=LEFT)
-	bDown.pack(side=LEFT)
-	lActions.pack()
-	lbActions.pack()
-	lbActionsBackend.pack()
+	#Start / End Num
+	lStartNum.grid(row = 10, column = 0, sticky=W)
+	lEndNum.grid(row = 11, column = 0, sticky=W)
+	tStartNum.grid(row = 10, column = 1, sticky=W)
+	tEndNum.grid(row = 11, column = 1, sticky=W)
 
-	bLoad.pack(side=LEFT)
-	bSave.pack(side=LEFT)
-	bSaveAs.pack(side=LEFT)
-	bClear.pack(side=LEFT)
-	lCanvas.pack()
-	cCanvas.pack()
-	lComment.pack(side=LEFT)
-	tComment.pack(side=LEFT)
-	lStartNum.pack(side=LEFT)
-	tStartNum.pack(side=LEFT)
-	lEndNum.pack(side=LEFT)
-	tEndNum.pack(side=LEFT)
+	#Save Buttons
+	fSaves.grid(row = 12, column = 0, columnspan = 4)
+	bLoad.grid(row = 0, column = 0)
+	bSave.grid(row = 0, column = 1)
+	bSaveAs.grid(row = 0, column = 2)
+	bClear.grid(row = 0, column = 3)
+
+	#Canvas
+	lCanvas.grid(row=13, column = 0, sticky=W)
+	cCanvas.grid(row=14, column = 0, columnspan = 4, sticky=W)
 
 createWidgets()
 paintWidgets()
