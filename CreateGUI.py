@@ -12,6 +12,7 @@ import tkFileDialog, tkMessageBox
 master = Tk()
 master.wm_title("pyScraper")
 k = PyKeyboard()
+m = PyMouse()
 
 #global Vars
 readyForMouseInput = False
@@ -284,7 +285,26 @@ def repaintActionLb():
 		i += 1
 
 def goGetEmTiger():
-	pass
+	i = 0
+	while i < lbActionsBackend.size():
+		lineStr = str(lbActionsBackend.get(i))
+		argLst = lineStr.split(delimChars)
+		if argLst[1] == "Click Mouse":
+			#To do: Sanitize inputs
+			#Mouse coords need to come in as (X, " "Y)
+			loc_string = argLst[2]
+			loc_string = loc_string[1:-1].strip()
+			loc_string = loc_string.replace(" ","")
+			m.click(int(loc_string.split(",")[0]), int(loc_string.split(",")[1]))
+		elif argLst[1] == "Pass Keys":
+			pass
+		elif argLst[1] == "Wait Seconds":
+			pass
+		elif argLst[1] == "Wait for Screen":
+			pass
+		else:
+			pass
+		i += 1
 
 def createWidgets():
 	#create GUI buttons
