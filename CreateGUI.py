@@ -8,6 +8,7 @@ from pymouse import PyMouse
 import tkFileDialog, tkMessageBox
 import os
 import time
+import ctypes
 
 #initialize Objects
 master = Tk()
@@ -22,6 +23,12 @@ headerLst = ["Order","Action Type", "Value", "Comment"]
 delimChars = "<~>"
 loadedFileName = ""
 beenSaved = True
+#Ctypes junk
+EnumWindows = ctypes.windll.user32.EnumWindows
+EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
+GetWindowText = ctypes.windll.user32.GetWindowTextW
+GetWindowTextLength = ctypes.windll.user32.GetWindowTextLengthW
+IsWindowVisible = ctypes.windll.user32.IsWindowVisible
 #note in createWidgets(), we create globals as well
 
 #functions
@@ -338,11 +345,12 @@ def goGetEmTiger():
 						#print "%s sent" % stringtopass[j]
 						j+=1
 				else: #Case for reaching end of the list
+					k=0
 					if stringtopass[j] in specialkeys:
 						#Tap the last key
 						kb.tap_key(specialkeys[stringtopass[j]])
 						j+=1
-						k=0
+						k += 1
 					else:#Can't press or tap if not a special key, so we send it instead
 						lit_string=stringtopass[j].strip('"')
 						kb.type_string(str(lit_string))
@@ -356,10 +364,33 @@ def goGetEmTiger():
 		elif argLst[1] == "Wait Seconds":
 			time.sleep(float(argLst[2]))
 		elif argLst[1] == "Wait for Screen":
-			pass
+			#Grabs the titles of all open windows (and a few invisible ones)
+			#Stores them in the titles list
+			#Windows only
+			#Grabbed from the wild, wild web. Thanks to whoever wrote it. 
+			titles = []
+			def foreach_window(hwnd, lParam):
+				if IsWindowVisible(hwnd):
+					length = GetWindowTextLength(hwnd)
+					buff = ctypes.create_unicode_buffer(length + 1)
+					GetWindowText(hwnd, buff, length + 1)
+					titles.append(buff.value)
+				return True
+			#Initial scan for screen titles
+			EnumWindows(EnumWindowsProc(foreach_window), 0)
+			window_found = False
+			while window_found != True:
+				for item in titles:
+					if argLst[2] in item:
+						window_found = True
+				print "Window  with %s in title not found. Sleeping for 500ms." % argLst[2]
+				EnumWindows(EnumWindowsProc(foreach_window), 0)
+				time.sleep(0.5)
 		else:
 			pass
 		i += 1
+
+
 
 def createWidgets():
 	#create GUI buttons
