@@ -386,7 +386,6 @@ def goGetEmTiger():
 				for item in titles:
 					if argLst[2] in item:
 						window_found = True
-				print "Window  with %s in title not found. Sleeping for 500ms." % argLst[2]
 				EnumWindows(EnumWindowsProc(foreach_window), 0)
 				time.sleep(0.5)
 		else:
