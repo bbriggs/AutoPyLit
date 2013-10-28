@@ -335,8 +335,7 @@ def goGetEmTiger():
 						#print "%s pressed" % stringtopass[j]
 						j+=1
 						#print "counter incremented: %d" % j
-					else:
-						#Can't press or tap if not a special key, so we send it instead
+					else:#Can't press or tap if not a special key, so we send it instead
 						lit_string=stringtopass[j].strip('"')
 						kb.pass_keys(lit_string)
 						#print "%s sent" % stringtopass[j]
@@ -348,12 +347,19 @@ def goGetEmTiger():
 						#print "end of list reached, %s tapped." % stringtopass[j]
 						j+=1
 						k=0
+					else:#Can't press or tap if not a special key, so we send it instead
+						lit_string=stringtopass[j].strip('"')
+						kb.pass_keys(lit_string)
+						#print "%s sent" % stringtopass[j]
 						#Release all previously pressed keys
-						while k <=len(stringtopass)-1:
-							if stringtopass[k] in specialkeys:
-								kb.release_key(specialkeys[stringtopass[k]])
-								#print "%s released." % stringtopass[k]
-								k+=1
+						j+=1
+						k=0
+					while k <=len(stringtopass)-1:#End of list reached, last item handled, release all keys
+						if stringtopass[k] in specialkeys:
+							kb.release_key(specialkeys[stringtopass[k]])
+							#print "%s released." % stringtopass[k]
+							k+=1
+					
 		elif argLst[1] == "Wait Seconds":
 			pass
 		elif argLst[1] == "Wait for Screen":
