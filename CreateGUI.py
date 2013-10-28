@@ -11,12 +11,12 @@ import os
 #initialize Objects
 master = Tk()
 master.wm_title("pyScraper")
-k = PyKeyboard()
+kb = PyKeyboard()
 m = PyMouse()
 
 #global Vars
 readyForMouseInput = False
-specialkeys= {"Tab":"k.tab_key","Shift":"k.shift_l_key","Enter":"k.enter_key","Ctrl" : "control_l_key", "Alt" : "alt_l_key", "Del" : "delete_key", "Insert":"insert_key","Esc":"escape_key","Special Keys":""}
+specialkeys= {"Tab":9,"Shift":160,"Enter":13,"Ctrl" : 162, "Alt" : 164, "Del" : 46, "Insert":45,"Esc":27,"Special Keys":""}
 headerLst = ["Order","Action Type", "Value", "Comment"]
 delimChars = "<~>"
 loadedFileName = ""
@@ -313,7 +313,46 @@ def goGetEmTiger():
 			loc_string = loc_string.replace(" ","")
 			m.click(int(loc_string.split(",")[0]), int(loc_string.split(",")[1]))
 		elif argLst[1] == "Pass Keys":
-			pass
+			stringtopass = argLst[2]
+			stringtopass = stringtopass.strip()
+			stringtopass = stringtopass.split("+")
+			#counter for looping through keystrokes
+			"""
+			Case for handling keystrokes/combinations
+			Press special keys until we hit end of line, then tap last key, release all pressed keys
+			If string is not a special key, pass keystrokes
+			TO DO: figure out a way to escape keys to pass literal keystrokes
+			"""
+			j = 0
+			while j <= len(stringtopass) - 1:
+				print "%d before length check" % j
+				if j != len(stringtopass) - 1:
+					"%d after length check" % j
+					if stringtopass[j] in specialkeys:
+						"String passed specialkeys check. j's value: %d" % j
+						#Press keys until we reach the end of the list
+						kb.press_key(specialkeys[stringtopass[j]])
+						j+=1
+						"counter incremented: %d" % j
+						print "%s pressed" % stringtopass[j]
+					else:
+						#Can't press or tap if not a special key, so we send it instead
+						kb.pass_keys(stringtopass[j])
+						print "%s sent" % stringtopass[j]
+						j+=1
+				else: #Case for reaching end of the list
+					if stringtopass[j] in specialkeys:
+						#Tap the last key
+						kb.tap_key(specialkeys[stringtopass[j]])
+						print "end of list reached, %s tapped." % stringtopass[j]
+						j+=1
+						k=0
+						#Release all previously pressed keys
+						while k <=len(stringtopass)-1:
+							if stringtopass[k] in specialkeys:
+								kb.release_key(specialkeys[stringtopass[k]])
+								print "%s released." % stringtopass[k]
+								k+=1
 		elif argLst[1] == "Wait Seconds":
 			pass
 		elif argLst[1] == "Wait for Screen":
