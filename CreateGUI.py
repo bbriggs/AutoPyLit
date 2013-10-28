@@ -325,33 +325,34 @@ def goGetEmTiger():
 			"""
 			j = 0
 			while j <= len(stringtopass) - 1:
-				print "%d before length check" % j
+				#print "%d before length check" % j
 				if j != len(stringtopass) - 1:
-					"%d after length check" % j
+					#print "%d after length check" % j
 					if stringtopass[j] in specialkeys:
-						"String passed specialkeys check. j's value: %d" % j
+						#print "String passed specialkeys check. j's value: %d" % j
 						#Press keys until we reach the end of the list
 						kb.press_key(specialkeys[stringtopass[j]])
+						#print "%s pressed" % stringtopass[j]
 						j+=1
-						"counter incremented: %d" % j
-						print "%s pressed" % stringtopass[j]
+						#print "counter incremented: %d" % j
 					else:
 						#Can't press or tap if not a special key, so we send it instead
-						kb.pass_keys(stringtopass[j])
-						print "%s sent" % stringtopass[j]
+						lit_string=stringtopass[j].strip('"')
+						kb.pass_keys(lit_string)
+						#print "%s sent" % stringtopass[j]
 						j+=1
 				else: #Case for reaching end of the list
 					if stringtopass[j] in specialkeys:
 						#Tap the last key
 						kb.tap_key(specialkeys[stringtopass[j]])
-						print "end of list reached, %s tapped." % stringtopass[j]
+						#print "end of list reached, %s tapped." % stringtopass[j]
 						j+=1
 						k=0
 						#Release all previously pressed keys
 						while k <=len(stringtopass)-1:
 							if stringtopass[k] in specialkeys:
 								kb.release_key(specialkeys[stringtopass[k]])
-								print "%s released." % stringtopass[k]
+								#print "%s released." % stringtopass[k]
 								k+=1
 		elif argLst[1] == "Wait Seconds":
 			pass
