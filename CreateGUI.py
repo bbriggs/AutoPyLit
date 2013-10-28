@@ -7,6 +7,7 @@ from pykeyboard import PyKeyboard
 from pymouse import PyMouse
 import tkFileDialog, tkMessageBox
 import os
+import time
 
 #initialize Objects
 master = Tk()
@@ -320,48 +321,40 @@ def goGetEmTiger():
 			"""
 			Case for handling keystrokes/combinations
 			Press special keys until we hit end of line, then tap last key, release all pressed keys
-			If string is not a special key, pass keystrokes
+			If string is not a special key, type_string(string)
 			TO DO: figure out a way to escape keys to pass literal keystrokes
+				EDIT: Mostly done. I hope. 
 			"""
 			j = 0
 			while j <= len(stringtopass) - 1:
-				#print "%d before length check" % j
 				if j != len(stringtopass) - 1:
-					#print "%d after length check" % j
 					if stringtopass[j] in specialkeys:
-						#print "String passed specialkeys check. j's value: %d" % j
 						#Press keys until we reach the end of the list
 						kb.press_key(specialkeys[stringtopass[j]])
-						#print "%s pressed" % stringtopass[j]
 						j+=1
-						#print "counter incremented: %d" % j
 					else:#Can't press or tap if not a special key, so we send it instead
 						lit_string=stringtopass[j].strip('"')
-						kb.pass_keys(lit_string)
+						kb.type_string(str(lit_string))
 						#print "%s sent" % stringtopass[j]
 						j+=1
 				else: #Case for reaching end of the list
 					if stringtopass[j] in specialkeys:
 						#Tap the last key
 						kb.tap_key(specialkeys[stringtopass[j]])
-						#print "end of list reached, %s tapped." % stringtopass[j]
 						j+=1
 						k=0
 					else:#Can't press or tap if not a special key, so we send it instead
 						lit_string=stringtopass[j].strip('"')
-						kb.pass_keys(lit_string)
-						#print "%s sent" % stringtopass[j]
+						kb.type_string(str(lit_string))
 						#Release all previously pressed keys
 						j+=1
-						k=0
-					while k <=len(stringtopass)-1:#End of list reached, last item handled, release all keys
+						k+=1
+					while k <=len(stringtopass)-1:
 						if stringtopass[k] in specialkeys:
 							kb.release_key(specialkeys[stringtopass[k]])
-							#print "%s released." % stringtopass[k]
 							k+=1
-					
 		elif argLst[1] == "Wait Seconds":
-			pass
+			time.sleep(float(argLst[2]))
 		elif argLst[1] == "Wait for Screen":
 			pass
 		else:
