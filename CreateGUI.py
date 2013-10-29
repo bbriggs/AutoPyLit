@@ -19,11 +19,20 @@ readyForMouseInput = False
 if platform.system() == "Darwin":
 	specialkeys = {"Special Keys":""}
 else:
-	specialkeys= {"Tab":kb.tab_key,"Shift":kb.shift_key,"Enter":kb.enter_key,"Ctrl":kb.control_key,\
-					"Alt":kb.alt_key, "Del":kb.delete_key, "Insert":kb.insert_key,\
-					"Esc":kb.escape_key,"Special Keys":""}
-
-	
+	specialkeys= {"Special Keys":"","Tab":kb.tab_key,"Shift":kb.shift_key,"Enter":kb.enter_key,\
+					"Ctrl":kb.control_key,"Alt":kb.alt_key, "Del":kb.delete_key,\
+					"Insert":kb.insert_key,"Esc":kb.escape_key,"Counter":-1,"F1":kb.function_keys[1],\
+					"F2":kb.function_keys[2],"F3":kb.function_keys[3],"F4":kb.function_keys[4],
+					"F5":kb.function_keys[5],"F6":kb.function_keys[6],"F7":kb.function_keys[7],\
+					"F8":kb.function_keys[8],"F9":kb.function_keys[9],"F10":kb.function_keys[10],\
+					"F11":kb.function_keys[11],"F12":kb.function_keys[12]}
+specialkeysorder= {"Special Keys":1,"Tab":2,"Shift":3,"Enter":4,\
+					"Ctrl":5,"Alt":6, "Del":7,\
+					"Insert":8,"Esc":9,"F1":10,\
+					"F2":11,"F3":12,"F4":13,
+					"F5":14,"F6":15,"F7":16,\
+					"F8":17,"F9":18,"F10":19,\
+					"F11":20,"F12":21,"[counter]":9.5}
 headerLst = ["Order","Action Type", "Value", "Comment"]
 delimChars = "<~>"
 loadedFileName = ""
@@ -65,10 +74,7 @@ def specialKeyInsert():
     Escape          escape_key
     """
     #We're going to do the conversion later on, when we read the action list. For now, let's keep it human readable. 
-    if mEnterString.get() != "Special Keys":
-    	if tEnterString.get() == "F[x]":
-    		tkMessageBox.showinfo("Fill in x", "Please fill in x with the appropriate function key!")
-    	
+    if mEnterString.get() != "Special Keys":    	
     	if len(tEnterString.get()) == 0:
     		tEnterString.insert(0,mEnterString.get())
     		mEnterString.set("Special Keys")
@@ -357,6 +363,7 @@ def goGetEmTiger():
 						k += 1
 					else:#Can't press or tap if not a special key, so we send it instead
 						lit_string=stringtopass[j].strip('"')
+						lit_string=lit_string.replace("[counter]",i)
 						kb.type_string(str(lit_string))
 						#Release all previously pressed keys
 						j+=1
@@ -481,26 +488,13 @@ def validateData(actionType, val):
 			return False
 			
 	elif actionType == "Pass Keys":
-		val += "+"
-		i = 0
-		#check all special keys
-		while i != len(val):
-			if val[i] == "\"":
-				if val[i:val.find("+")].find("+") != -1 or \
-						val[i:val.find("+")-1].find("\"") != -1 or \
-						val[len(val)-2] != "\"":
-					#checks to ensure there are no pluses, quotes in string and string is ended
+		lst = val.split("+")
+		for itm in lst:
+			print itm
+			if itm not in specialkeys:
+				if itm[0] != "\"" or itm[-1] != "\"" or itm[1:-1].find("\"") != -1:
 					return False
-				else:
-					return True
-			
-			if val[i:val.find("+",i)] not in specialkeys:
-				#value is not a string literal, ensure it's in specialkeys
-				return False
-				
-			i = val.find("+", i) + 1
 		return True
-		
 		
 	elif actionType == "Wait Seconds":
 		return isFloat(val)
@@ -548,9 +542,10 @@ def createWidgets():
 	tEnterString = Entry(master)
 	mEnterString = StringVar(master)
 	mEnterString.set("Special Keys")
-	##TO DO: Add support for F keys, Windows/Function/Mac key, Home/End, Page Up/Down
-	mEnterStringOptions = OptionMenu(master, mEnterString, "Special Keys","Ctrl", \
-		"Alt","Del","Insert","Esc","Tab","Shift","Enter","F[x]")
+	##TO DO: Windows/Function/Mac key, Home/End, Page Up/Down
+	sortList = sorted(specialkeys.keys(), key=lambda x: specialkeysorder[x])
+	mEnterStringOptions = apply(OptionMenu, (master, mEnterString) + tuple(sortList))
+	
 	#mEnterStringOptions.bind("<ButtonRelease-1>",specialKeyInsert)
 	bEnterString = Button(master, text="Add", command=specialKeyInsert)
 
