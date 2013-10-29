@@ -6,6 +6,7 @@ import tkFileDialog, tkMessageBox
 import os
 import time
 import ctypes
+import platform
 
 #initialize Objects
 master = Tk()
@@ -15,17 +16,17 @@ m = PyMouse()
 
 #global Vars
 readyForMouseInput = False
-specialkeys= {"Tab":9,"Shift":160,"Enter":13,"Ctrl" : 162, "Alt" : 164, "Del" : 46, "Insert":45,"Esc":27,"Special Keys":""}
+if platform.system() == "Darwin":
+	specialkeys = {"Special Keys":""}
+else:
+	specialkeys= {"Tab":kb.tab_key,"Shift":kb.shift_key,"Enter":kb.enter_key,"Ctrl":kb.control_key,\
+					"Alt":kb.alt_key, "Del":kb.delete_key, "Insert":kb.insert_key,\
+					"Esc":kb.escape_key,"Special Keys":""}
+	
 headerLst = ["Order","Action Type", "Value", "Comment"]
 delimChars = "<~>"
 loadedFileName = ""
 beenSaved = True
-#Ctypes junk
-EnumWindows = ctypes.windll.user32.EnumWindows
-EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
-GetWindowText = ctypes.windll.user32.GetWindowTextW
-GetWindowTextLength = ctypes.windll.user32.GetWindowTextLengthW
-IsWindowVisible = ctypes.windll.user32.IsWindowVisible
 #note in createWidgets(), we create globals as well
 
 #functions
@@ -49,9 +50,9 @@ def getMouseInput(event):
 	Purpose: grabs a mouse location as a tuple and passes it to the textbox for mouse coords in the GUI
 	Unbinds after event occurs to ensure that we don't keep updating coords every time the user presses 'm'
 	"""
-    tRecMouse.insert(0, str(master.winfo_pointerxy()))
-    master.unbind("<Key>")
-    sendMessage("")
+	tRecMouse.insert(0, str(master.winfo_pointerxy()))
+	master.unbind("<Key>")
+	sendMessage("")
     
 def specialKeyInsert():
     """
@@ -98,19 +99,27 @@ def saveAction():
 		if tRecMouse.get().strip() != "":
 			actionType = "Click Mouse"
 			actionVal = tRecMouse.get()
+			errMsg = "Your input is not in the correct format! Please check to ensure your value is in the format (x, y) where x and y are integers.  The format must be exactly matched!"
 			
 		elif tEnterString.get().strip() != "":
 			actionType = "Pass Keys"
 			actionVal = tEnterString.get()
+			errMsg = "Your input is not in the correct format! Please check to ensure your value is in the format: SpecialKey+SpecialKey+\"StringLiteral\", note: you cannot have a special key after a string literal, nor can you have a plus sign in a string literal"
 			
 		elif tWait.get().strip() != "":
 			actionType = "Wait Seconds"
 			actionVal = tWait.get()
+			errMsg = "Your input is not in the correct format! Your wait time must be a number, please check for spaces or alphabetical characters!"
 			
 		elif tWaitScreen.get().strip() != "":
 			actionType = "Wait for Screen"
 			actionVal = tWaitScreen.get()
-
+			errMsg = "Your input is not in the correct format!"
+			
+		if not validateData(actionType, actionVal):
+			tkMessageBox.showwarning("Input Error!", errMsg)
+			return
+			
 		Comment = tComment.get()
 		addLBItem([orderNum, actionType, actionVal, Comment])
 		beenSaved = False
@@ -131,7 +140,7 @@ def delAction():
 		#We will not allow you to delete the header, also if nothing is selected, do nothing
 	else:
 		lbActionsBackend.delete(str(int(lbActions.curselection()[0]) - 1)) #have to account for header row
-		repaintActionLb()
+		reorderList()
 		beenSaved = False
 
 def loadConfig():
@@ -283,7 +292,7 @@ def moveItem(moveDir):
 			#reinsert item at proper position
 			lbActionsBackend.insert(lstindex - 1 + moveDir, curItm)
 	
-			repaintActionLb()
+			reorderList()
 			lbActions.activate(lstindex + moveDir)
 			lbActions.selection_set(lstindex + moveDir)
 			beenSaved = False
@@ -366,33 +375,164 @@ def goGetEmTiger():
 							k+=1
 		elif argLst[1] == "Wait Seconds":
 			time.sleep(float(argLst[2]))
+			
 		elif argLst[1] == "Wait for Screen":
-			#Grabs the titles of all open windows (and a few invisible ones)
-			#Stores them in the titles list
-			#Windows only
-			#Grabbed from the wild, wild web. Thanks to whoever wrote it. 
-			titles = []
-			def foreach_window(hwnd, lParam):
-				if IsWindowVisible(hwnd):
-					length = GetWindowTextLength(hwnd)
-					buff = ctypes.create_unicode_buffer(length + 1)
-					GetWindowText(hwnd, buff, length + 1)
-					titles.append(buff.value)
-				return True
-			#Initial scan for screen titles
-			EnumWindows(EnumWindowsProc(foreach_window), 0)
-			window_found = False
-			while window_found != True:
-				for item in titles:
-					if argLst[2] in item:
-						window_found = True
-				EnumWindows(EnumWindowsProc(foreach_window), 0)
+			#platform dependent code, get function name and call it via string
+			if platform.system() == "Darwin":
+				#Mac
+				callme = "macWindowExists"
+				
+			elif platform.system() == "Windows":
+				#Windows
+				callme = "winWindowExists"
+				
+			elif platform.system() == "Linux":
+				#linux
+				callme = "linWindowExists"
+			
+			#got function name, call it via text and pass in window name
+			while not globals()[callme](argLst[2]):
 				time.sleep(0.5)
+			
 		else:
 			pass
+		print "Executed loop " + str(i) + " Times"
 		i += 1
 
+def linWindowExists(chkTxt):
+	if str(os.system("wmctrl -l | grep '"+ chkTxt +"'")) == "256":
+		return False
+	else:
+		return True
 
+def winWindowExists(chkTxt):
+	#Grabs the titles of all open windows (and a few invisible ones)
+	#Stores them in the titles list
+	#Windows only
+	#Grabbed from the wild, wild web. Thanks to whoever wrote it. 
+	#Ctypes junk
+	EnumWindows = ctypes.windll.user32.EnumWindows
+	EnumWindowsProc = ctypes.WINFUNCTYPE(ctypes.c_bool, ctypes.POINTER(ctypes.c_int), ctypes.POINTER(ctypes.c_int))
+	GetWindowText = ctypes.windll.user32.GetWindowTextW
+	GetWindowTextLength = ctypes.windll.user32.GetWindowTextLengthW
+	IsWindowVisible = ctypes.windll.user32.IsWindowVisible
+
+	titles = []
+	def foreach_window(hwnd, lParam):
+		if IsWindowVisible(hwnd):
+			length = GetWindowTextLength(hwnd)
+			buff = ctypes.create_unicode_buffer(length + 1)
+			GetWindowText(hwnd, buff, length + 1)
+			titles.append(buff.value)
+		return True
+	#Initial scan for screen titles
+	EnumWindows(EnumWindowsProc(foreach_window), 0)
+
+	for item in titles:
+		if chkTxt in item:
+			return True
+	return False
+
+def macWindowExists(chkTxt):
+	import shlex, subprocess, os
+
+	command_line = """osascript -s s -e 'tell application "System Events" to get the title of every window of every process --result: list'"""
+	
+	args = shlex.split(command_line)
+
+	p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+	out, err = p.communicate()
+	print "got Info"
+
+	out = out.replace("{}, ","")
+	out = out.replace("}, {", ", ")
+	out = out.strip("\n")
+	out = out.strip("{")
+	out = out.strip("}")
+	out = out.strip("\"")
+	out = out.strip("\", ")
+	out = out.split("\", \"")
+	
+	print "formatted"
+	for itm in out:
+		if itm.find(chkTxt) != -1:
+			return True
+	return False
+		
+def reorderList():
+	sel = None
+	if len(lbActions.curselection()) != 0:
+		sel = lbActions.curselection()[0]
+
+	oList = []
+	for i in range(lbActionsBackend.size()):
+		curRow = lbActionsBackend.get(i)
+		j = curRow.find("<")
+		oList.append(str(i + 1) + str(curRow[j:]).strip("\n"))
+	lbActionsBackend.delete(0, END)
+	for i in range(len(oList)):
+		lbActionsBackend.insert(END, oList[i])
+	repaintActionLb()
+	if sel != None:
+		lbActions.activate(sel)
+		lbActions.selection_set(sel)
+
+def validateData(actionType, val):
+	if actionType == "Click Mouse":
+		#test that we conform to (x, y) syntax exactly
+		if val[0] == "(" and \
+				val[len(val)-1] == ")" and \
+				isInt(val[1:val.find(" ")-1]) and \
+				val[val.find(" ")-1] == "," and \
+				isInt(val[val.find(" ")+1:len(val)-1]):
+			return True
+		else:
+			return False
+			
+	elif actionType == "Pass Keys":
+		val += "+"
+		i = 0
+		#check all special keys
+		while i != len(val):
+			if val[i] == "\"":
+				if val[i:val.find("+")].find("+") != -1 or \
+						val[i:val.find("+")-1].find("\"") != -1 or \
+						val[len(val)-2] != "\"":
+					#checks to ensure there are no pluses, quotes in string and string is ended
+					return False
+				else:
+					return True
+			
+			if val[i:val.find("+",i)] not in specialkeys:
+				#value is not a string literal, ensure it's in specialkeys
+				return False
+				
+			i = val.find("+", i) + 1
+		return True
+		
+		
+	elif actionType == "Wait Seconds":
+		return isFloat(val)
+		
+	elif actionType == "Wait for Screen":
+		#really anything is fine here
+		return True
+		
+def isInt(str):
+	#checks to see if a string can be cast to an int
+	try:
+		int(str)
+		return True
+	except:
+		return False
+
+def isFloat(str):
+	#checks to see if a string can be cast to an int
+	try:
+		float(str)
+		return True
+	except:
+		return False
 
 def createWidgets():
 	#create GUI buttons
