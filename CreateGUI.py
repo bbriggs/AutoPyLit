@@ -22,6 +22,7 @@ else:
 	specialkeys= {"Tab":kb.tab_key,"Shift":kb.shift_key,"Enter":kb.enter_key,"Ctrl":kb.control_key,\
 					"Alt":kb.alt_key, "Del":kb.delete_key, "Insert":kb.insert_key,\
 					"Esc":kb.escape_key,"Special Keys":""}
+
 	
 headerLst = ["Order","Action Type", "Value", "Comment"]
 delimChars = "<~>"
@@ -44,14 +45,8 @@ def sendMessage(txt):
 	cCanvas.create_rectangle(5,5,610,100)
 
 def getMouseInput(event):
-	"""
-	Triggered by recMouseClick
-	Input/args: event
-	Purpose: grabs a mouse location as a tuple and passes it to the textbox for mouse coords in the GUI
-	Unbinds after event occurs to ensure that we don't keep updating coords every time the user presses 'm'
-	"""
 	tRecMouse.insert(0, str(master.winfo_pointerxy()))
-	master.unbind("<Key>")
+	master.unbind("m")
 	sendMessage("")
     
 def specialKeyInsert():
@@ -292,9 +287,7 @@ def moveItem(moveDir):
 			#reinsert item at proper position
 			lbActionsBackend.insert(lstindex - 1 + moveDir, curItm)
 	
-			reorderList()
-			lbActions.activate(lstindex + moveDir)
-			lbActions.selection_set(lstindex + moveDir)
+			reorderList(moveDir)
 			beenSaved = False
 
 #add an item to master listbox, repaint listbox user sees
@@ -345,6 +338,7 @@ def goGetEmTiger():
 				EDIT: Mostly done. I hope. 
 			"""
 			j = 0
+			k = 0
 			while j <= len(stringtopass) - 1:
 				if j != len(stringtopass) - 1:
 					if stringtopass[j] in specialkeys:
@@ -354,10 +348,8 @@ def goGetEmTiger():
 					else:#Can't press or tap if not a special key, so we send it instead
 						lit_string=stringtopass[j].strip('"')
 						kb.type_string(str(lit_string))
-						#print "%s sent" % stringtopass[j]
 						j+=1
 				else: #Case for reaching end of the list
-					k=0
 					if stringtopass[j] in specialkeys:
 						#Tap the last key
 						kb.tap_key(specialkeys[stringtopass[j]])
@@ -369,10 +361,12 @@ def goGetEmTiger():
 						#Release all previously pressed keys
 						j+=1
 						k+=1
-					while k <=len(stringtopass)-1:
-						if stringtopass[k] in specialkeys:
-							kb.release_key(specialkeys[stringtopass[k]])
-							k+=1
+					for itm in stringtopass:
+						print itm
+						if itm in specialkeys:
+							print "Released: " + itm
+							kb.release_key(specialkeys[itm])
+							
 		elif argLst[1] == "Wait Seconds":
 			time.sleep(float(argLst[2]))
 			
@@ -396,7 +390,6 @@ def goGetEmTiger():
 			
 		else:
 			pass
-		print "Executed loop " + str(i) + " Times"
 		i += 1
 
 def linWindowExists(chkTxt):
@@ -442,8 +435,7 @@ def macWindowExists(chkTxt):
 
 	p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 	out, err = p.communicate()
-	print "got Info"
-
+	
 	out = out.replace("{}, ","")
 	out = out.replace("}, {", ", ")
 	out = out.strip("\n")
@@ -453,16 +445,15 @@ def macWindowExists(chkTxt):
 	out = out.strip("\", ")
 	out = out.split("\", \"")
 	
-	print "formatted"
 	for itm in out:
 		if itm.find(chkTxt) != -1:
 			return True
 	return False
 		
-def reorderList():
+def reorderList(moveDir=0):
 	sel = None
 	if len(lbActions.curselection()) != 0:
-		sel = lbActions.curselection()[0]
+		sel = int(lbActions.curselection()[0]) + moveDir
 
 	oList = []
 	for i in range(lbActionsBackend.size()):
