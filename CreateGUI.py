@@ -301,7 +301,7 @@ def addLBItem(argLst):
 def repaintActionLb():
 	#Clear list and add header
 	lbActions.delete(0,END)
-	lbActions.insert(END, "Order".ljust(8) + "|" + "Action Type".ljust(20) + \
+	lbActions.insert(END, "Order".ljust(8) + "|" + "Action Type".ljust(18) + \
 		"|" + "Value".ljust(25) + "|" + "Comment".ljust(25))
 	
 	i = 0
@@ -309,7 +309,7 @@ def repaintActionLb():
 	while i < lbActionsBackend.size():
 		lineStr = str(lbActionsBackend.get(i))
 		argLst = lineStr.split(delimChars)
-		lbActions.insert(END, argLst[0][0:8].ljust(8) + "|" + argLst[1][0:20].ljust(20) + \
+		lbActions.insert(END, argLst[0][0:8].ljust(8) + "|" + argLst[1][0:18].ljust(18) + \
 			"|" + argLst[2][0:25].ljust(25) + "|" + argLst[3][0:25].ljust(25))
 		i += 1
 
@@ -575,12 +575,12 @@ def createWidgets():
 	tComment = Entry(master)
 
 	fSaveAction = Frame(master)
-	bSaveAction = Button(master, text="Save Action", command=saveAction, width =10)
-	bDelAction = Button(master, text="Delete Action", command=delAction, width =10)
+	bSaveAction = Button(fSaveAction, text="Save Action", command=saveAction, width =10)
+	bDelAction = Button(fSaveAction, text="Delete Action", command=delAction, width =10)
 
 	fActions = Frame(master)
 	lActions = Label(master, text="Action List:", anchor = W, justify=LEFT)
-	lbActions = Listbox(master, width = 86, font=("Courier",12))
+	lbActions = Listbox(master, font=("Courier",10))
 	lbActionsBackend = Listbox(master)
 	repaintActionLb()
 
@@ -599,7 +599,7 @@ def createWidgets():
 	cCanvas = Canvas(master, height = 100, width = 655)
 	cCanvas.create_rectangle(5,5,610,100)
 
-	bGo = Button(master, text="GO!", command=goGetEmTiger, height = 5)
+	bGo = Button(master, text="GO!", command=goGetEmTiger, font=("Courier",20), background="red")
 
 def paintWidgets():
 	#paint everything
@@ -628,16 +628,17 @@ def paintWidgets():
 	bEnterString.grid(row=3, column = 3, sticky=W+E)
 	
 	#Action buttons
-	bDelAction.grid(row=7, column = 2, columnspan=2, sticky = E, padx = 3)
-	bSaveAction.grid(row = 7, column = 2, columnspan=2, sticky = W)
+	fSaveAction.grid(row=7, column=2,columnspan=2, sticky =EW)
+	bDelAction.grid(row=1, column = 1, sticky = EW)
+	bSaveAction.grid(row = 1, column = 2, sticky = EW)
 	
 	#action listbox
 	lActions.grid(row=8, column = 0, sticky=W)
-	lbActions.grid(row = 9, column = 0, sticky=W, columnspan = 4, padx=10)
+	lbActions.grid(row = 9, column = 0, sticky=EW, columnspan = 3, padx = 10)
 
 	#Up / Down buttons
-	bUp.grid(row = 9, column = 0, columnspan = 4, sticky=NE, pady = 10)
-	bDown.grid(row = 9, column = 0, columnspan = 4, sticky=SE, pady = 10)
+	bUp.grid(row = 9, column = 3, sticky=NW, pady = 10)
+	bDown.grid(row = 9, column = 3, sticky=SW, pady = 10)
 
 	#Start / End Num
 	lStartNum.grid(row = 10, column = 0, sticky=W)
@@ -654,10 +655,10 @@ def paintWidgets():
 
 	#Canvas
 	lCanvas.grid(row=13, column = 0, sticky=W)
-	cCanvas.grid(row=14, column = 0, columnspan = 4, sticky=W)
+	cCanvas.grid(row=14, column = 0, columnspan = 3, sticky=W)
 	
 	#Go Button
-	bGo.grid(row = 15, column = 0, columnspan = 4, sticky=NSEW)
+	bGo.grid(row = 15, column = 0, columnspan = 4, sticky=NSEW, padx =10, pady =10)
 	master.grid_rowconfigure(15, minsize=100)
 	
 createWidgets()
