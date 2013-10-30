@@ -15,12 +15,12 @@ This might not be for you. Then again, it might. I'm not here to tell you what y
 Install python and the one non-standard library we use, pyUserInput. 
 Python downloads can be found [here](http://www.python.org/download/)  
 The pyUserInput library and instructions for installing it can be found [here](https://github.com/SavinaRoja/PyUserInput)  
-Once that is done, run the pyScrape.py file by executing it from command line or just clicking on it. Your preference.  
+Once that is done, run the AutoPyLit.py file by executing it from command line or just clicking on it. Your preference.  
 If you choose command line, your command will look something like this:  
 **Windows**  
-`C:\Users\username\Desktop\pyScrape.py`  
+`C:\Users\username\Desktop\AutoPyLit.py`  
 **Linux**  
-`./pyScrape.py`  
+`./AutoPyLit.py`  
 This command takes no arguments.  
   
 ####**I made some actions and I want to save them.**
