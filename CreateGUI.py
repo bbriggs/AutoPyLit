@@ -320,8 +320,6 @@ def repaintActionLb():
 		i += 1
 
 def goGetEmTiger():
-	i = 0
-	
 	#get literal values for startNum and endNum
 	st = tStartNum.get()
 	en = tEndNum.get()
@@ -338,6 +336,7 @@ def goGetEmTiger():
 	en = int(en)
 	
 	while st <= en:
+		i = 0
 		while i < lbActionsBackend.size():
 			lineStr = str(lbActionsBackend.get(i))
 			argLst = lineStr.split(delimChars)
@@ -386,9 +385,7 @@ def goGetEmTiger():
 							j+=1
 							k+=1
 						for itm in stringtopass:
-							print itm
 							if itm in specialkeys:
-								print "Released: " + itm
 								kb.release_key(specialkeys[itm])
 							
 			elif argLst[1] == "Wait Seconds":
@@ -415,7 +412,6 @@ def goGetEmTiger():
 			else:
 				pass
 			i += 1
-		print "I ran! st= " + str(st)
 		st += 1
 
 def linWindowExists(chkTxt):
@@ -509,7 +505,6 @@ def validateData(actionType, val):
 	elif actionType == "Pass Keys":
 		lst = val.split("+")
 		for itm in lst:
-			print itm
 			if itm not in specialkeys:
 				if itm[0] != "\"" or itm[-1] != "\"" or itm[1:-1].find("\"") != -1:
 					return False
