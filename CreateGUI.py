@@ -321,83 +321,102 @@ def repaintActionLb():
 
 def goGetEmTiger():
 	i = 0
-	while i < lbActionsBackend.size():
-		lineStr = str(lbActionsBackend.get(i))
-		argLst = lineStr.split(delimChars)
-		if argLst[1] == "Click Mouse":
-			#To do: Sanitize inputs
-			#Mouse coords need to come in as (X, " "Y)
-			loc_string = argLst[2]
-			loc_string = loc_string[1:-1].strip()
-			loc_string = loc_string.replace(" ","")
-			m.click(int(loc_string.split(",")[0]), int(loc_string.split(",")[1]))
-		elif argLst[1] == "Pass Keys":
-			stringtopass = argLst[2]
-			stringtopass = stringtopass.strip()
-			stringtopass = stringtopass.split("+")
-			#counter for looping through keystrokes
-			"""
-			Case for handling keystrokes/combinations
-			Press special keys until we hit end of line, then tap last key, release all pressed keys
-			If string is not a special key, type_string(string)
-			TO DO: figure out a way to escape keys to pass literal keystrokes
-				EDIT: Mostly done. I hope. 
-			"""
-			j = 0
-			k = 0
-			while j <= len(stringtopass) - 1:
-				if j != len(stringtopass) - 1:
-					if stringtopass[j] in specialkeys:
-						#Press keys until we reach the end of the list
-						kb.press_key(specialkeys[stringtopass[j]])
-						j+=1
-					else:#Can't press or tap if not a special key, so we send it instead
-						lit_string=stringtopass[j].strip('"')
-						kb.type_string(str(lit_string))
-						j+=1
-				else: #Case for reaching end of the list
-					if stringtopass[j] in specialkeys:
-						#Tap the last key
-						kb.tap_key(specialkeys[stringtopass[j]])
-						j+=1
-						k += 1
-					else:#Can't press or tap if not a special key, so we send it instead
-						lit_string=stringtopass[j].strip('"')
-						lit_string=lit_string.replace("[counter]",i)
-						kb.type_string(str(lit_string))
-						#Release all previously pressed keys
-						j+=1
-						k+=1
-					for itm in stringtopass:
-						print itm
-						if itm in specialkeys:
-							print "Released: " + itm
-							kb.release_key(specialkeys[itm])
+	
+	#get literal values for startNum and endNum
+	st = tStartNum.get()
+	en = tEndNum.get()
+	
+	#test to see if blank.  A blank string evaluates as False
+	if not st:
+		st = 0
+	
+	if not en:
+		en = 0
+		
+	#cast as int
+	st = int(st)
+	en = int(en)
+	
+	while st <= en:
+		while i < lbActionsBackend.size():
+			lineStr = str(lbActionsBackend.get(i))
+			argLst = lineStr.split(delimChars)
+			if argLst[1] == "Click Mouse":
+				#To do: Sanitize inputs
+				#Mouse coords need to come in as (X, " "Y)
+				loc_string = argLst[2]
+				loc_string = loc_string[1:-1].strip()
+				loc_string = loc_string.replace(" ","")
+				m.click(int(loc_string.split(",")[0]), int(loc_string.split(",")[1]))
+			elif argLst[1] == "Pass Keys":
+				stringtopass = argLst[2]
+				stringtopass = stringtopass.strip()
+				stringtopass = stringtopass.split("+")
+				#counter for looping through keystrokes
+				"""
+				Case for handling keystrokes/combinations
+				Press special keys until we hit end of line, then tap last key, release all pressed keys
+				If string is not a special key, type_string(string)
+				TO DO: figure out a way to escape keys to pass literal keystrokes
+					EDIT: Mostly done. I hope. 
+				"""
+				j = 0
+				k = 0
+				while j <= len(stringtopass) - 1:
+					if j != len(stringtopass) - 1:
+						if stringtopass[j] in specialkeys:
+							#Press keys until we reach the end of the list
+							kb.press_key(specialkeys[stringtopass[j]])
+							j+=1
+						else:#Can't press or tap if not a special key, so we send it instead
+							lit_string=stringtopass[j].strip('"')
+							kb.type_string(str(lit_string))
+							j+=1
+					else: #Case for reaching end of the list
+						if stringtopass[j] in specialkeys:
+							#Tap the last key
+							kb.tap_key(specialkeys[stringtopass[j]])
+							j+=1
+							k += 1
+						else:#Can't press or tap if not a special key, so we send it instead
+							lit_string=stringtopass[j].strip('"')
+							lit_string=lit_string.replace("[counter]",str(st+1))
+							kb.type_string(str(lit_string))
+							#Release all previously pressed keys
+							j+=1
+							k+=1
+						for itm in stringtopass:
+							print itm
+							if itm in specialkeys:
+								print "Released: " + itm
+								kb.release_key(specialkeys[itm])
 							
-		elif argLst[1] == "Wait Seconds":
-			time.sleep(float(argLst[2]))
+			elif argLst[1] == "Wait Seconds":
+				time.sleep(float(argLst[2]))
 			
-		elif argLst[1] == "Wait for Screen":
-			#platform dependent code, get function name and call it via string
-			if platform.system() == "Darwin":
-				#Mac
-				callme = "macWindowExists"
+			elif argLst[1] == "Wait for Screen":
+				#platform dependent code, get function name and call it via string
+				if platform.system() == "Darwin":
+					#Mac
+					callme = "macWindowExists"
 				
-			elif platform.system() == "Windows":
-				#Windows
-				callme = "winWindowExists"
+				elif platform.system() == "Windows":
+					#Windows
+					callme = "winWindowExists"
 				
-			elif platform.system() == "Linux":
-				#linux
-				callme = "linWindowExists"
+				elif platform.system() == "Linux":
+					#linux
+					callme = "linWindowExists"
 			
-			#got function name, call it via text and pass in window name
-			while not globals()[callme](argLst[2]):
-				time.sleep(0.5)
+				#got function name, call it via text and pass in window name
+				while not globals()[callme](argLst[2]):
+					time.sleep(0.5)
 			
-		else:
-			pass
-		i += 1
+			else:
+				pass
+			i += 1
+		print "I ran! st= " + str(st)
+		st += 1
 
 def linWindowExists(chkTxt):
 	if str(os.system("wmctrl -l | grep '"+ chkTxt +"'")) == "256":
