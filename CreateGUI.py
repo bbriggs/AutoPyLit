@@ -21,7 +21,7 @@ if platform.system() == "Darwin":
 else:
 	specialkeys= {"Special Keys":"","Tab":kb.tab_key,"Shift":kb.shift_key,"Enter":kb.enter_key,\
 					"Ctrl":kb.control_key,"Alt":kb.alt_key, "Del":kb.delete_key,\
-					"Insert":kb.insert_key,"Esc":kb.escape_key,"[counter]":-1,"F1":kb.function_keys[1],\
+					"Insert":kb.insert_key,"Esc":kb.escape_key,"F1":kb.function_keys[1],\
 					"F2":kb.function_keys[2],"F3":kb.function_keys[3],"F4":kb.function_keys[4],
 					"F5":kb.function_keys[5],"F6":kb.function_keys[6],"F7":kb.function_keys[7],\
 					"F8":kb.function_keys[8],"F9":kb.function_keys[9],"F10":kb.function_keys[10],\
