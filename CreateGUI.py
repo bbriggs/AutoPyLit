@@ -21,7 +21,7 @@ if platform.system() == "Darwin":
 else:
 	specialkeys= {"Special Keys":"","Tab":kb.tab_key,"Shift":kb.shift_key,"Enter":kb.enter_key,\
 					"Ctrl":kb.control_key,"Alt":kb.alt_key, "Del":kb.delete_key,\
-					"Insert":kb.insert_key,"Esc":kb.escape_key,"Counter":-1,"F1":kb.function_keys[1],\
+					"Insert":kb.insert_key,"Esc":kb.escape_key,"[counter]":-1,"F1":kb.function_keys[1],\
 					"F2":kb.function_keys[2],"F3":kb.function_keys[3],"F4":kb.function_keys[4],
 					"F5":kb.function_keys[5],"F6":kb.function_keys[6],"F7":kb.function_keys[7],\
 					"F8":kb.function_keys[8],"F9":kb.function_keys[9],"F10":kb.function_keys[10],\
@@ -546,12 +546,10 @@ def createWidgets():
 	lTitle = Label(master, text="Mouse / Keyboard Automation Tool",anchor = W, justify=LEFT)
 	lTitle2 = Label(master, text="",anchor = W, justify=LEFT)
 
-	fMouse = Frame(master)
 	lRecMouse = Label(master, text="Click at Coordinates (x,y):", anchor = W, justify=LEFT)
 	tRecMouse = Entry(master)
 	bRecMouse = Button(master, text="Get Coordinates", command=recMouseClick, width = 14)
 
-	fEnterString = Frame(master)
 	lEnterString = Label(master, text="Pass Keystrokes:", anchor = W, justify=LEFT)
 	tEnterString = Entry(master)
 	mEnterString = StringVar(master)
@@ -563,23 +561,18 @@ def createWidgets():
 	#mEnterStringOptions.bind("<ButtonRelease-1>",specialKeyInsert)
 	bEnterString = Button(master, text="Add", command=specialKeyInsert)
 
-	fStartNum = Frame(master)
 	lStartNum = Label(master, text="Starting Num:", anchor = W, justify=LEFT)
 	tStartNum = Entry(master)
 
-	fEndNum = Frame(master)
 	lEndNum = Label(master, text="Ending Num (inclusive):", anchor = W, justify=LEFT)
 	tEndNum = Entry(master)
 
-	fWait = Frame(master)
 	lWait = Label(master, text="Wait Seconds:", anchor = W, justify=LEFT)
 	tWait = Entry(master)
 
-	fWaitScreen = Frame(master)
 	lWaitScreen = Label(master, text="Wait for window to open with name:", anchor = W, justify=LEFT)
 	tWaitScreen = Entry(master)
 
-	fComment = Frame(master)
 	lComment = Label(master, text="Enter a Comment with Action:", anchor = W, justify=LEFT)
 	tComment = Entry(master)
 
@@ -593,7 +586,6 @@ def createWidgets():
 	lbActionsBackend = Listbox(master)
 	repaintActionLb()
 
-	fMoveButtons = Frame(master)
 	bUp = Button(master, text=u"\u2191", command=moveItemUp)
 	bDown = Button(master, text=u"\u2193", command=moveItemDwn)
 
@@ -603,7 +595,6 @@ def createWidgets():
 	bSaveAs = Button(fSaves, text="Save Config As...", command=saveConfigAs, width = 15)
 	bClear = Button(fSaves, text="Clear Screen", command=newActionSet, width = 15)
 
-	fCanvas = Frame(master)
 	lCanvas = Label(master, text="Messages:")
 	cCanvas = Canvas(master, height = 100, width = 655)
 	cCanvas.create_rectangle(5,5,610,100)
@@ -646,8 +637,8 @@ def paintWidgets():
 	lbActions.grid(row = 9, column = 0, sticky=EW, columnspan = 3, padx = 10)
 
 	#Up / Down buttons
-	bUp.grid(row = 9, column = 3, sticky=NW, pady = 10)
-	bDown.grid(row = 9, column = 3, sticky=SW, pady = 10)
+	bUp.grid(row = 9, column = 3, sticky=N+E+W, pady = 10, padx=2)
+	bDown.grid(row = 9, column = 3, sticky=S+E+W, pady = 10, padx=2)
 
 	#Start / End Num
 	lStartNum.grid(row = 10, column = 0, sticky=W)
