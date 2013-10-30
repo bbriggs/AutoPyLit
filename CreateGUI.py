@@ -209,7 +209,7 @@ def newActionSet():
 	#determine if user needs option to save, provide if necessary
 	if not(beenSaved):
 		if tkMessageBox.askyesno("Save?","Would you like to save your current list?"):
-			if loadeFileName != "":
+			if loadedFileName != "":
 				saveConfig()
 			else:
 				saveConfigAs()
