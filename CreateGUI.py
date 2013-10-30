@@ -379,7 +379,7 @@ def goGetEmTiger():
 							k += 1
 						else:#Can't press or tap if not a special key, so we send it instead
 							lit_string=stringtopass[j].strip('"')
-							lit_string=lit_string.replace("[counter]",str(st+1))
+							lit_string=lit_string.replace("[counter]",str(st))
 							kb.type_string(str(lit_string))
 							#Release all previously pressed keys
 							j+=1
