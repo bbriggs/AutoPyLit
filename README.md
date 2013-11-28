@@ -18,9 +18,9 @@ The pyUserInput library and instructions for installing it can be found [here](h
 Once that is done, run the AutoPyLit.py file by executing it from command line or just clicking on it. Your preference.  
 If you choose command line, your command will look something like this:  
 **Windows**  
-`C:\Users\username\Desktop\AutoPyLit.py`  
+` python C:\Users\username\Desktop\AutoPyLit.py`  
 **Linux**  
-`./AutoPyLit.py`  
+` python ./AutoPyLit.py`  
 This command takes no arguments.  
   
 ####**I made some actions and I want to save them.**
