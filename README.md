@@ -37,7 +37,7 @@ One last note about things you can and cannot do: Ctrl+Alt+Delete isn't working 
 Have you tried turning it off and on again?  
 
 ####**Yes.**
-Email us. Bren@brenbriggs.com or kevin.daniel.mccabe@gmail.com
+Create an issue, we'll look at it right away.
   
 ####**Will you update this?**
 Probably, but we don't know when.  
